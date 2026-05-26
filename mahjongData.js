@@ -1,0 +1,96 @@
+// 牌の順序（既存）
+export const tileOrder = [
+  '🀇','🀈','🀉','🀊','🀋','🀌','🀍','🀎','🀏',
+  '🀙','🀚','🀛','🀜','🀝','🀞','🀟','🀠','🀡',
+  '🀐','🀑','🀒','🀓','🀔','🀕','🀖','🀗','🀘',
+  '🀀','🀁','🀂','🀃','🀄','🀅','🀆'
+];
+
+// 牌の詳細情報
+export const tileInfo = {
+  '🀇': { name: '一萬', reading: 'いちまん', suit: '萬子', num: 1 },
+  '🀈': { name: '二萬', reading: 'にまん', suit: '萬子', num: 2 },
+  '🀉': { name: '三萬', reading: 'さんまん', suit: '萬子', num: 3 },
+  '🀊': { name: '四萬', reading: 'よんまん', suit: '萬子', num: 4 },
+  '🀋': { name: '五萬', reading: 'ごまん', suit: '萬子', num: 5 },
+  '🀌': { name: '六萬', reading: 'ろくまん', suit: '萬子', num: 6 },
+  '🀍': { name: '七萬', reading: 'ななまん', suit: '萬子', num: 7 },
+  '🀎': { name: '八萬', reading: 'はちまん', suit: '萬子', num: 8 },
+  '🀏': { name: '九萬', reading: 'きゅうまん', suit: '萬子', num: 9 },
+  '🀙': { name: '一筒', reading: 'いっぴん', suit: '筒子', num: 1 },
+  '🀚': { name: '二筒', reading: 'りゃんぴん', suit: '筒子', num: 2 },
+  '🀛': { name: '三筒', reading: 'さんぴん', suit: '筒子', num: 3 },
+  '🀜': { name: '四筒', reading: 'すーぴん', suit: '筒子', num: 4 },
+  '🀝': { name: '五筒', reading: 'うーぴん', suit: '筒子', num: 5 },
+  '🀞': { name: '六筒', reading: 'ろっぴん', suit: '筒子', num: 6 },
+  '🀟': { name: '七筒', reading: 'ちーぴん', suit: '筒子', num: 7 },
+  '🀠': { name: '八筒', reading: 'はっぴん', suit: '筒子', num: 8 },
+  '🀡': { name: '九筒', reading: 'きゅうぴん', suit: '筒子', num: 9 },
+  '🀐': { name: '一索', reading: 'いーそう', suit: '索子', num: 1 },
+  '🀑': { name: '二索', reading: 'りゃんぞう', suit: '索子', num: 2 },
+  '🀒': { name: '三索', reading: 'さんぞう', suit: '索子', num: 3 },
+  '🀓': { name: '四索', reading: 'すーそう', suit: '索子', num: 4 },
+  '🀔': { name: '五索', reading: 'うーそう', suit: '索子', num: 5 },
+  '🀕': { name: '六索', reading: 'ろーそう', suit: '索子', num: 6 },
+  '🀖': { name: '七索', reading: 'ちーそう', suit: '索子', num: 7 },
+  '🀗': { name: '八索', reading: 'ぱーそう', suit: '索子', num: 8 },
+  '🀘': { name: '九索', reading: 'きゅうそう', suit: '索子', num: 9 },
+  '🀀': { name: '東', reading: 'トン', suit: '風牌', num: 0 },
+  '🀁': { name: '南', reading: 'ナン', suit: '風牌', num: 0 },
+  '🀂': { name: '西', reading: 'シャー', suit: '風牌', num: 0 },
+  '🀃': { name: '北', reading: 'ペー', suit: '風牌', num: 0 },
+  '🀄': { name: '中', reading: 'チュン', suit: '三元牌', num: 0 },
+  '🀅': { name: '發', reading: 'ハツ', suit: '三元牌', num: 0 },
+  '🀆': { name: '白', reading: 'ハク', suit: '三元牌', num: 0 }
+};
+
+// 全役データ
+export const yakuData = [
+  // === 1翻 ===
+  { name: 'リーチ', kanji: '立直', han: '1翻', condition: '門前', description: '門前（鳴いていない状態）でテンパイした時に「リーチ」と宣言し、1000点棒を場に出す。宣言後は手牌を変更できない。', difficulty: 1 },
+  { name: '一発', kanji: '一発', han: '1翻', condition: 'リーチ後', description: 'リーチ宣言後、次の自分のツモ番までの1巡以内にアガること。途中で他家の鳴きが入ると無効。', difficulty: 1 },
+  { name: '門前清自摸和', kanji: 'ツモ', han: '1翻', condition: '門前', description: '鳴いていない状態（門前）で、自分のツモでアガること。ロンアガリでは成立しない。', difficulty: 1 },
+  { name: 'タンヤオ', kanji: '断么九', han: '1翻', condition: 'なし', description: '手牌すべてが中張牌（数牌の2〜8）のみで構成されている。1・9・字牌を一切含まない。', difficulty: 1 },
+  { name: 'ピンフ', kanji: '平和', han: '1翻', condition: '門前', description: '4つの面子がすべて順子で、雀頭が役牌でなく、待ちが両面待ちであること。', difficulty: 2 },
+  { name: '一盃口', kanji: 'イーペーコー', han: '1翻', condition: '門前', description: '同じ種類・同じ数字の順子が2組ある形。例：🀇🀈🀉🀇🀈🀉', difficulty: 2 },
+  { name: '役牌（白）', kanji: '白', han: '1翻', condition: 'なし', description: '白（🀆）の刻子（3枚）または槓子（4枚）があること。鳴いても成立する。', difficulty: 1 },
+  { name: '役牌（發）', kanji: '發', han: '1翻', condition: 'なし', description: '發（🀅）の刻子（3枚）または槓子（4枚）があること。鳴いても成立する。', difficulty: 1 },
+  { name: '役牌（中）', kanji: '中', han: '1翻', condition: 'なし', description: '中（🀄）の刻子（3枚）または槓子（4枚）があること。鳴いても成立する。', difficulty: 1 },
+  { name: '自風牌', kanji: '自風牌', han: '1翻', condition: 'なし', description: '自分の風（東家なら東、南家なら南など）の刻子があること。鳴いても成立する。', difficulty: 1 },
+  { name: '場風牌', kanji: '場風牌', han: '1翻', condition: 'なし', description: '場の風（東場なら東、南場なら南）の刻子があること。鳴いても成立する。', difficulty: 1 },
+  { name: '嶺上開花', kanji: 'リンシャンカイホウ', han: '1翻', condition: 'なし', description: 'カン（槓）をした後に引いた嶺上牌でアガること。', difficulty: 3 },
+  { name: '槍槓', kanji: 'チャンカン', han: '1翻', condition: 'なし', description: '他家が加カン（ポンした牌に4枚目を追加）した牌で、ロンアガリすること。', difficulty: 3 },
+  { name: '海底摸月', kanji: 'ハイテイ', han: '1翻', condition: 'なし', description: '山の最後の牌（海底牌）をツモしてアガること。', difficulty: 3 },
+  { name: '河底撈魚', kanji: 'ホウテイ', han: '1翻', condition: 'なし', description: '最後の打牌（河底牌）でロンアガリすること。', difficulty: 3 },
+  // === 2翻 ===
+  { name: 'ダブルリーチ', kanji: 'ダブル立直', han: '2翻', condition: '門前', description: '第一ツモ（最初の自分の番）でリーチを宣言すること。それまでに誰も鳴いていないことが条件。', difficulty: 3 },
+  { name: '三色同順', kanji: 'サンショクドウジュン', han: '2翻', condition: 'なし', description: '萬子・筒子・索子の3種類で同じ数字の順子を作る。例：一二三萬＋一二三筒＋一二三索', difficulty: 2 },
+  { name: '三色同刻', kanji: 'サンショクドウコー', han: '2翻', condition: 'なし', description: '萬子・筒子・索子の3種類で同じ数字の刻子を作る。例：五萬×3＋五筒×3＋五索×3', difficulty: 3 },
+  { name: '一気通貫', kanji: 'イッキツウカン', han: '2翻', condition: 'なし', description: '同じ種類の数牌で1-2-3、4-5-6、7-8-9の3つの順子を作る。', difficulty: 2 },
+  { name: '対々和', kanji: 'トイトイ', han: '2翻', condition: 'なし', description: '4つの面子がすべて刻子（同じ牌3枚）であること。順子が一つもない。', difficulty: 2 },
+  { name: '三暗刻', kanji: 'サンアンコー', han: '2翻', condition: 'なし', description: '手の中で作った暗刻（鳴かずに揃えた刻子）が3つあること。', difficulty: 3 },
+  { name: '三槓子', kanji: 'サンカンツ', han: '2翻', condition: 'なし', description: 'カン（槓）を3回成功させていること。非常にレア。', difficulty: 3 },
+  { name: '小三元', kanji: 'ショウサンゲン', han: '2翻', condition: 'なし', description: '三元牌（白・發・中）のうち2種類を刻子にし、残り1種類を雀頭にする。※役牌2つ分もつくため実質4翻。', difficulty: 3 },
+  { name: '混老頭', kanji: 'ホンロウトウ', han: '2翻', condition: 'なし', description: '手牌すべてが1・9の数牌と字牌のみで構成されている。中張牌（2〜8）を含まない。', difficulty: 3 },
+  { name: '七対子', kanji: 'チートイツ', han: '2翻', condition: '門前', description: '7組の対子（同じ牌2枚のペア）で手を作る特殊形。通常の4面子1雀頭ではない。', difficulty: 2 },
+  { name: '混全帯么九', kanji: 'チャンタ', han: '2翻', condition: 'なし', description: 'すべての面子と雀頭に1・9の数牌、または字牌が含まれていること。', difficulty: 2 },
+  // === 3翻 ===
+  { name: '混一色', kanji: 'ホンイツ', han: '3翻', condition: 'なし', description: '1種類の数牌と字牌だけで手を構成する。例：萬子＋字牌のみ。鳴くと2翻に下がる。', difficulty: 2 },
+  { name: '純全帯么九', kanji: 'ジュンチャン', han: '3翻', condition: 'なし', description: 'すべての面子と雀頭に1・9の数牌が含まれている。字牌は使えない（チャンタの上位版）。', difficulty: 3 },
+  { name: '二盃口', kanji: 'リャンペーコー', han: '3翻', condition: '門前', description: '一盃口が2組ある形。見た目は七対子と同じになることもある。', difficulty: 3 },
+  // === 6翻 ===
+  { name: '清一色', kanji: 'チンイツ', han: '6翻', condition: 'なし', description: '1種類の数牌だけで手を構成する。字牌も使わない（混一色の上位版）。鳴くと5翻に下がる。', difficulty: 3 },
+  // === 役満 ===
+  { name: '国士無双', kanji: 'コクシムソウ', han: '役満', condition: '門前', description: '1・9の数牌全種（6枚）と字牌全種（7枚）を1枚ずつ＋どれか1枚を追加した13種14枚の特殊形。', difficulty: 3 },
+  { name: '四暗刻', kanji: 'スーアンコー', han: '役満', condition: '門前', description: '暗刻（自力で集めた刻子）を4つ作る。最高峰の門前役。', difficulty: 3 },
+  { name: '大三元', kanji: 'ダイサンゲン', han: '役満', condition: 'なし', description: '三元牌（白・發・中）をすべて刻子にする。', difficulty: 3 },
+  { name: '字一色', kanji: 'ツーイーソー', han: '役満', condition: 'なし', description: '手牌すべてが字牌（風牌＋三元牌）のみで構成されている。', difficulty: 3 },
+  { name: '緑一色', kanji: 'リューイーソー', han: '役満', condition: 'なし', description: '索子の2・3・4・6・8と發のみで手を構成する。すべて緑色の牌。', difficulty: 3 },
+  { name: '清老頭', kanji: 'チンロウトウ', han: '役満', condition: 'なし', description: '1と9の数牌のみで手を構成する。字牌を含まない（混老頭の上位版）。', difficulty: 3 },
+  { name: '小四喜', kanji: 'ショウスーシー', han: '役満', condition: 'なし', description: '風牌（東南西北）のうち3種類を刻子にし、残り1種を雀頭にする。', difficulty: 3 },
+  { name: '大四喜', kanji: 'ダイスーシー', han: '役満', condition: 'なし', description: '風牌（東南西北）4種類すべてを刻子にする。ダブル役満とするルールもある。', difficulty: 3 },
+  { name: '四槓子', kanji: 'スーカンツ', han: '役満', condition: 'なし', description: 'カン（槓）を4回成功させる。麻雀で最も出にくい役の一つ。', difficulty: 3 },
+  { name: '天和', kanji: 'テンホー', han: '役満', condition: '親限定', description: '親の配牌（最初に配られた14枚）でいきなりアガっている状態。完全な運。', difficulty: 3 },
+  { name: '地和', kanji: 'チーホー', han: '役満', condition: '子限定', description: '子の第一ツモでアガること。それまでに誰も鳴いていないことが条件。', difficulty: 3 },
+  { name: '九蓮宝燈', kanji: 'チューレンポートー', han: '役満', condition: '門前', description: '1種類の数牌で1112345678999＋同種の任意の1枚。「純正九蓮」はダブル役満とされることも。', difficulty: 3 },
+];

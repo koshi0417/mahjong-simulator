@@ -1,0 +1,310 @@
+// ========== 牌データ ==========
+const tileOrder = ['🀇','🀈','🀉','🀊','🀋','🀌','🀍','🀎','🀏','🀙','🀚','🀛','🀜','🀝','🀞','🀟','🀠','🀡','🀐','🀑','🀒','🀓','🀔','🀕','🀖','🀗','🀘','🀀','🀁','🀂','🀃','🀄','🀅','🀆'];
+const tileInfo = {
+  '🀇':{name:'一萬',reading:'いちまん',suit:'萬子'},'🀈':{name:'二萬',reading:'にまん',suit:'萬子'},'🀉':{name:'三萬',reading:'さんまん',suit:'萬子'},
+  '🀊':{name:'四萬',reading:'よんまん',suit:'萬子'},'🀋':{name:'五萬',reading:'ごまん',suit:'萬子'},'🀌':{name:'六萬',reading:'ろくまん',suit:'萬子'},
+  '🀍':{name:'七萬',reading:'ななまん',suit:'萬子'},'🀎':{name:'八萬',reading:'はちまん',suit:'萬子'},'🀏':{name:'九萬',reading:'きゅうまん',suit:'萬子'},
+  '🀙':{name:'一筒',reading:'いっぴん',suit:'筒子'},'🀚':{name:'二筒',reading:'りゃんぴん',suit:'筒子'},'🀛':{name:'三筒',reading:'さんぴん',suit:'筒子'},
+  '🀜':{name:'四筒',reading:'すーぴん',suit:'筒子'},'🀝':{name:'五筒',reading:'うーぴん',suit:'筒子'},'🀞':{name:'六筒',reading:'ろっぴん',suit:'筒子'},
+  '🀟':{name:'七筒',reading:'ちーぴん',suit:'筒子'},'🀠':{name:'八筒',reading:'はっぴん',suit:'筒子'},'🀡':{name:'九筒',reading:'きゅうぴん',suit:'筒子'},
+  '🀐':{name:'一索',reading:'いーそう',suit:'索子'},'🀑':{name:'二索',reading:'りゃんぞう',suit:'索子'},'🀒':{name:'三索',reading:'さんぞう',suit:'索子'},
+  '🀓':{name:'四索',reading:'すーそう',suit:'索子'},'🀔':{name:'五索',reading:'うーそう',suit:'索子'},'🀕':{name:'六索',reading:'ろーそう',suit:'索子'},
+  '🀖':{name:'七索',reading:'ちーそう',suit:'索子'},'🀗':{name:'八索',reading:'ぱーそう',suit:'索子'},'🀘':{name:'九索',reading:'きゅうそう',suit:'索子'},
+  '🀀':{name:'東',reading:'トン',suit:'字牌'},'🀁':{name:'南',reading:'ナン',suit:'字牌'},'🀂':{name:'西',reading:'シャー',suit:'字牌'},'🀃':{name:'北',reading:'ペー',suit:'字牌'},
+  '🀄':{name:'中',reading:'チュン',suit:'字牌'},'🀅':{name:'發',reading:'ハツ',suit:'字牌'},'🀆':{name:'白',reading:'ハク',suit:'字牌'}
+};
+const suitTiles = {
+  '萬子': tileOrder.slice(0,9), '筒子': tileOrder.slice(9,18),
+  '索子': tileOrder.slice(18,27), '字牌': tileOrder.slice(27)
+};
+
+// ========== 役データ（全役） ==========
+const yakuData = [
+  {name:'リーチ',kanji:'立直',han:'1翻',desc:'門前でテンパイ時に「リーチ」と宣言。1000点棒を場に出す。宣言後は手牌変更不可。'},
+  {name:'一発',kanji:'一発',han:'1翻',desc:'リーチ宣言後、1巡以内にアガること。途中で鳴きが入ると無効。'},
+  {name:'門前清自摸和',kanji:'ツモ',han:'1翻',desc:'門前（鳴いていない状態）で自分のツモでアガること。'},
+  {name:'タンヤオ',kanji:'断么九',han:'1翻',desc:'手牌すべてが中張牌（2〜8の数牌）のみ。1・9・字牌を含まない。'},
+  {name:'ピンフ',kanji:'平和',han:'1翻',desc:'4面子すべて順子、雀頭が役牌でなく、両面待ち。門前限定。'},
+  {name:'一盃口',kanji:'イーペーコー',han:'1翻',desc:'同種・同数の順子が2組。例：🀇🀈🀉🀇🀈🀉。門前限定。'},
+  {name:'役牌（白）',kanji:'白',han:'1翻',desc:'🀆白の刻子（3枚）があること。鳴いてもOK。'},
+  {name:'役牌（發）',kanji:'發',han:'1翻',desc:'🀅發の刻子（3枚）があること。鳴いてもOK。'},
+  {name:'役牌（中）',kanji:'中',han:'1翻',desc:'🀄中の刻子（3枚）があること。鳴いてもOK。'},
+  {name:'自風牌',kanji:'自風牌',han:'1翻',desc:'自分の風（東家なら東など）の刻子。鳴いてもOK。'},
+  {name:'場風牌',kanji:'場風牌',han:'1翻',desc:'場の風（東場なら東）の刻子。鳴いてもOK。'},
+  {name:'嶺上開花',kanji:'リンシャンカイホウ',han:'1翻',desc:'カンした後の嶺上牌でアガること。'},
+  {name:'槍槓',kanji:'チャンカン',han:'1翻',desc:'他家の加カンした牌でロンアガリ。'},
+  {name:'海底摸月',kanji:'ハイテイ',han:'1翻',desc:'山の最後の牌をツモしてアガること。'},
+  {name:'河底撈魚',kanji:'ホウテイ',han:'1翻',desc:'最後の捨て牌でロンアガリすること。'},
+  {name:'ダブルリーチ',kanji:'ダブル立直',han:'2翻',desc:'第一ツモでリーチ宣言。それまで誰も鳴いていないこと。'},
+  {name:'三色同順',kanji:'サンショク',han:'2翻',desc:'萬子・筒子・索子で同じ数字の順子。例：123萬+123筒+123索'},
+  {name:'三色同刻',kanji:'サンショクドウコー',han:'2翻',desc:'萬子・筒子・索子で同じ数字の刻子。例：555萬+555筒+555索'},
+  {name:'一気通貫',kanji:'イッツー',han:'2翻',desc:'同種の数牌で123・456・789の3順子を作る。'},
+  {name:'対々和',kanji:'トイトイ',han:'2翻',desc:'4面子すべてが刻子（同じ牌3枚）。順子なし。'},
+  {name:'三暗刻',kanji:'サンアンコー',han:'2翻',desc:'鳴かずに揃えた暗刻が3つあること。'},
+  {name:'三槓子',kanji:'サンカンツ',han:'2翻',desc:'カンを3回成功させていること。'},
+  {name:'小三元',kanji:'ショウサンゲン',han:'2翻',desc:'三元牌のうち2種を刻子、1種を雀頭。実質4翻相当。'},
+  {name:'混老頭',kanji:'ホンロウトウ',han:'2翻',desc:'1・9の数牌と字牌のみ。2〜8を含まない。'},
+  {name:'七対子',kanji:'チートイツ',han:'2翻',desc:'7組の対子で手を構成する特殊形。門前限定。'},
+  {name:'混全帯么九',kanji:'チャンタ',han:'2翻',desc:'すべての面子・雀頭に1・9か字牌が含まれる。'},
+  {name:'混一色',kanji:'ホンイツ',han:'3翻',desc:'1種類の数牌＋字牌のみで構成。鳴くと2翻。'},
+  {name:'純全帯么九',kanji:'ジュンチャン',han:'3翻',desc:'すべての面子・雀頭に1・9が含まれる。字牌なし。'},
+  {name:'二盃口',kanji:'リャンペーコー',han:'3翻',desc:'一盃口が2組ある形。門前限定。'},
+  {name:'清一色',kanji:'チンイツ',han:'6翻',desc:'1種類の数牌のみで構成。字牌も不可。鳴くと5翻。'},
+  {name:'国士無双',kanji:'コクシムソウ',han:'役満',desc:'1・9全種＋字牌全種を1枚ずつ＋どれか1枚の13種14枚。'},
+  {name:'四暗刻',kanji:'スーアンコー',han:'役満',desc:'暗刻を4つ作る。門前限定の最高峰。'},
+  {name:'大三元',kanji:'ダイサンゲン',han:'役満',desc:'白・發・中の三元牌すべてを刻子にする。'},
+  {name:'字一色',kanji:'ツーイーソー',han:'役満',desc:'手牌すべてが字牌のみ。'},
+  {name:'緑一色',kanji:'リューイーソー',han:'役満',desc:'索子の2・3・4・6・8と發のみで構成。'},
+  {name:'清老頭',kanji:'チンロウトウ',han:'役満',desc:'1と9の数牌のみで構成。字牌なし。'},
+  {name:'小四喜',kanji:'ショウスーシー',han:'役満',desc:'風牌3種を刻子、1種を雀頭。'},
+  {name:'大四喜',kanji:'ダイスーシー',han:'役満',desc:'東南西北すべてを刻子。'},
+  {name:'四槓子',kanji:'スーカンツ',han:'役満',desc:'カンを4回成功させる。最も出にくい役。'},
+  {name:'天和',kanji:'テンホー',han:'役満',desc:'親の配牌でいきなりアガっている状態。'},
+  {name:'地和',kanji:'チーホー',han:'役満',desc:'子の第一ツモでアガること。鳴きなし条件。'},
+  {name:'九蓮宝燈',kanji:'チューレンポートー',han:'役満',desc:'1種の数牌で1112345678999＋同種1枚。'},
+];
+const hanCategories = ['1翻','2翻','3翻','6翻','役満'];
+
+// ========== 何切る用データ ==========
+const roundPool = ['東1局','東2局','東3局','東4局','南1局','南2局','南3局','南4局（オーラス）'];
+const windPool = ['東家','南家','西家','北家'];
+const scorePool = ['平場','トップ目','ラス目','アガリトップ（大接戦）'];
+const turnPool = [3,4,5,6,7,8,9,10,12,14,15];
+
+// ========== ユーティリティ ==========
+function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function pick(arr,n){ return shuffle(arr).slice(0,n); }
+
+// ========== クイズ生成 ==========
+function genTileQuiz(){
+  const questions=[];
+  const tiles=Object.keys(tileInfo);
+  for(let i=0;i<10;i++){
+    const t=tiles[Math.floor(Math.random()*tiles.length)];
+    const correct=tileInfo[t].name;
+    const wrongs=shuffle(tiles.filter(x=>tileInfo[x].name!==correct)).slice(0,3).map(x=>tileInfo[x].name);
+    const opts=shuffle([correct,...wrongs]);
+    questions.push({tile:t,question:`この牌の名前は？`,options:opts,correct,explain:`${t} は「${correct}」（${tileInfo[t].reading}）です。${tileInfo[t].suit}に属します。`});
+  }
+  return questions;
+}
+
+function genMeldQuiz(){
+  const questions=[];
+  for(let i=0;i<10;i++){
+    const r=Math.random();
+    let tiles3,correct,explain;
+    if(r<0.35){
+      const suit=Math.floor(Math.random()*3);
+      const start=Math.floor(Math.random()*7);
+      tiles3=[tileOrder[suit*9+start],tileOrder[suit*9+start+1],tileOrder[suit*9+start+2]];
+      correct='順子（シュンツ）';
+      explain=`${tiles3.join('')} は連続する同じ種類の数牌3枚なので「順子」です。`;
+    } else if(r<0.7){
+      const idx=Math.floor(Math.random()*tileOrder.length);
+      tiles3=[tileOrder[idx],tileOrder[idx],tileOrder[idx]];
+      correct='刻子（コーツ）';
+      explain=`${tiles3.join('')} は同じ牌が3枚なので「刻子」です。`;
+    } else {
+      let t3;
+      do {
+        t3=pick(tileOrder,3);
+      } while(isValidMeld(t3));
+      tiles3=t3;
+      correct='面子ではない';
+      explain=`${tiles3.join('')} は順子でも刻子でもないため、面子にはなりません。`;
+    }
+    questions.push({tiles:tiles3,question:'この3枚は面子（メンツ）になる？',options:['順子（シュンツ）','刻子（コーツ）','面子ではない'],correct,explain});
+  }
+  return questions;
+}
+
+function isValidMeld(t3){
+  if(t3[0]===t3[1]&&t3[1]===t3[2]) return true;
+  const idxs=t3.map(t=>tileOrder.indexOf(t)).sort((a,b)=>a-b);
+  const suit0=Math.floor(idxs[0]/9), suit1=Math.floor(idxs[1]/9), suit2=Math.floor(idxs[2]/9);
+  if(suit0===suit1&&suit1===suit2&&suit0<3&&idxs[1]-idxs[0]===1&&idxs[2]-idxs[1]===1) return true;
+  return false;
+}
+
+function genYakuQuiz(){
+  const questions=[];
+  for(let i=0;i<10;i++){
+    const y=yakuData[Math.floor(Math.random()*yakuData.length)];
+    const wrongs=shuffle(yakuData.filter(x=>x.name!==y.name)).slice(0,2).map(x=>x.name);
+    const opts=shuffle([y.name,...wrongs]);
+    questions.push({question:y.desc,options:opts,correct:y.name,explain:`正解は「${y.name}」（${y.kanji}）${y.han}です。`});
+  }
+  return questions;
+}
+
+// ========== 何切るロジック（既存） ==========
+function createWall(){ let w=[]; tileOrder.forEach(t=>w.push(t,t,t,t)); return shuffle(w); }
+
+function analyzeHand(hand,sit){
+  const counts={}; hand.forEach(t=>{counts[t]=(counts[t]||0)+1;});
+  const iso=hand.filter(t=>counts[t]===1);
+  let tile=hand[0],exp='';
+  if(iso.length>0){
+    const ji=iso.find(t=>tileOrder.indexOf(t)>=27);
+    const term=iso.find(t=>[0,8,9,17,18,26].includes(tileOrder.indexOf(t)));
+    if(ji){tile=ji;exp=`孤立した字牌（${ji}）は面子になりにくいため優先して切ります。`;}
+    else if(term){tile=term;exp=`孤立した端牌（${term}）は受入れが少ないため切ります。`;}
+    else{tile=iso[0];exp=`「${iso[0]}」が孤立牌です。ブロック整理のため切ります。`;}
+  } else { exp=`孤立牌がない形です。仮として「${hand[0]}」を推奨打牌とします。`; }
+  let extra='';
+  if(sit.score==='ラス目') extra='\n💡ラス目：高打点を狙う攻撃的な選択も視野に。';
+  else if(sit.score==='トップ目') extra='\n💡トップ目：振り込み回避を優先。';
+  else if(sit.turn>=12) extra=`\n💡${sit.turn}巡目：安全度も考慮すべき終盤。`;
+  else if(sit.round==='南4局（オーラス）') extra='\n💡オーラス：順位条件を意識した一打を。';
+  return {tile,explanation:'【牌理分析】'+exp+extra};
+}
+
+function genQuestion(){
+  const w=createWall(); let h=w.slice(0,14); const dora=w[14];
+  h.sort((a,b)=>tileOrder.indexOf(a)-tileOrder.indexOf(b));
+  const sit={round:roundPool[Math.floor(Math.random()*roundPool.length)],wind:windPool[Math.floor(Math.random()*windPool.length)],score:scorePool[Math.floor(Math.random()*scorePool.length)],turn:turnPool[Math.floor(Math.random()*turnPool.length)],dora};
+  const a=analyzeHand(h,sit);
+  return {situation:sit,hand:h,correct:a.tile,explanation:a.explanation};
+}
+
+// ========== Vue App ==========
+const {createApp,ref,computed,onMounted} = Vue;
+
+createApp({
+  setup(){
+    const page=ref('home');
+    const unlockedStep=ref(1);
+    const stepCleared=ref({1:false,2:false,3:false});
+
+    // タブ
+    const tileTab=ref('萬子');
+    const yakuTab=ref('1翻');
+
+    // クイズ共通
+    const quizStep=ref(0);
+    const quizQs=ref([]);
+    const quizIdx=ref(0);
+    const quizScore=ref(0);
+    const quizSel=ref(null);
+
+    // ゲーム
+    const activeMode=ref('');
+    const timeLeft=ref(0);
+    let timerId=null;
+    const score=ref(0);
+    const lives=ref(3);
+    const combo=ref(0);
+    const highScore=ref(0);
+    const isNewRecord=ref(false);
+    const questionCount=ref(1);
+    const currentQ=ref({});
+    const selectedTile=ref(null);
+    const showExpl=ref(false);
+    const judgment=ref(null);
+
+    // 計算
+    const currentTiles=computed(()=>suitTiles[tileTab.value]||[]);
+    const filteredYaku=computed(()=>yakuData.filter(y=>y.han===yakuTab.value));
+    const currentQuiz=computed(()=>quizQs.value[quizIdx.value]||{});
+
+    onMounted(()=>{
+      const s=localStorage.getItem('mjStep');
+      if(s){const d=JSON.parse(s);unlockedStep.value=d.unlocked||1;stepCleared.value=d.cleared||{1:false,2:false,3:false};}
+      const hs=localStorage.getItem('mahjongHighScore');
+      if(hs) highScore.value=parseInt(hs,10);
+    });
+
+    function saveProgress(){localStorage.setItem('mjStep',JSON.stringify({unlocked:unlockedStep.value,cleared:stepCleared.value}));}
+
+    function goStep(n){
+      if(n>unlockedStep.value) return;
+      if(n===4){page.value='step4';return;}
+      page.value='step'+n+'-learn';
+    }
+
+    function startQuiz(step){
+      quizStep.value=step;
+      quizIdx.value=0; quizScore.value=0; quizSel.value=null;
+      if(step===1) quizQs.value=genTileQuiz();
+      else if(step===2) quizQs.value=genMeldQuiz();
+      else quizQs.value=genYakuQuiz();
+      page.value='quiz';
+    }
+
+    function selectQuizAnswer(opt){
+      if(quizSel.value!==null) return;
+      quizSel.value=opt;
+      if(opt===currentQuiz.value.correct) quizScore.value++;
+    }
+
+    function nextQuizQ(){
+      if(quizIdx.value<9){quizIdx.value++;quizSel.value=null;}
+      else{
+        const passed=quizScore.value>=7;
+        if(passed){
+          stepCleared.value[quizStep.value]=true;
+          if(quizStep.value<4&&quizStep.value>=unlockedStep.value){
+            unlockedStep.value=quizStep.value+1;
+          }
+          saveProgress();
+        }
+        page.value='quiz-result';
+      }
+    }
+
+    // ゲーム機能（既存）
+    function startGame(mode){
+      activeMode.value=mode; score.value=0; combo.value=0; questionCount.value=1; isNewRecord.value=false;
+      if(mode==='survival') lives.value=3;
+      else if(mode==='timeAttack'){timeLeft.value=60;timerId=setInterval(()=>{timeLeft.value--;if(timeLeft.value<=0)endGame();},1000);}
+      currentQ.value=genQuestion(); selectedTile.value=null; showExpl.value=false; judgment.value=null;
+      page.value='game';
+    }
+
+    function selectTile(t){
+      if(selectedTile.value||page.value!=='game') return;
+      selectedTile.value=t;
+      if(t===currentQ.value.correct){judgment.value='correct';combo.value++;score.value+=activeMode.value==='practice'?1:100*combo.value;}
+      else{judgment.value='incorrect';combo.value=0;if(activeMode.value==='survival'){lives.value--;if(lives.value<=0)setTimeout(endGame,1500);}}
+      showExpl.value=true;
+    }
+
+    function nextQuestion(){
+      questionCount.value++; currentQ.value=genQuestion();
+      selectedTile.value=null; judgment.value=null; showExpl.value=false;
+    }
+
+    function endGame(){
+      if(timerId){clearInterval(timerId);timerId=null;}
+      if(activeMode.value==='survival'&&score.value>highScore.value&&score.value>0){
+        highScore.value=score.value;isNewRecord.value=true;localStorage.setItem('mahjongHighScore',highScore.value);
+      }
+      page.value='game-result';
+    }
+
+    function goHome(){
+      if(timerId){clearInterval(timerId);timerId=null;}
+      page.value='home'; selectedTile.value=null; judgment.value=null; showExpl.value=false;
+    }
+
+    function toggleExpl(){showExpl.value=!showExpl.value;}
+
+    function stepStatus(n){
+      if(stepCleared.value[n]) return 'cleared';
+      if(n<=unlockedStep.value) return 'unlocked';
+      return 'locked';
+    }
+
+    return {
+      page,unlockedStep,stepCleared,tileTab,yakuTab,
+      quizStep,quizQs,quizIdx,quizScore,quizSel,currentQuiz,
+      activeMode,timeLeft,score,lives,combo,highScore,isNewRecord,
+      questionCount,currentQ,selectedTile,showExpl,judgment,
+      currentTiles,filteredYaku,
+      suitTiles,tileInfo,yakuData,hanCategories,tileOrder,
+      goStep,startQuiz,selectQuizAnswer,nextQuizQ,
+      startGame,selectTile,nextQuestion,endGame,goHome,toggleExpl,stepStatus
+    };
+  }
+}).mount('#app');
