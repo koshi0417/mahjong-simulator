@@ -84,7 +84,14 @@ const suitTiles = {
   '索子': tileOrder.slice(18,27), '字牌': tileOrder.slice(27)
 };
 
-// ========== 役データ（全役） ==========
+// ========== 役データと段位システム ==========
+const ranks = [
+  {title:'初心者',xp:0},{title:'九級',xp:50},{title:'八級',xp:100},{title:'七級',xp:200},
+  {title:'六級',xp:300},{title:'五級',xp:450},{title:'四級',xp:600},{title:'三級',xp:800},
+  {title:'二級',xp:1000},{title:'一級',xp:1250},{title:'初段',xp:1500},{title:'二段',xp:2000},
+  {title:'三段',xp:2500},{title:'四段',xp:3500},{title:'雀豪',xp:5000},{title:'雀聖',xp:8000}
+];
+
 const yakuData = [
   {name:'リーチ',kanji:'立直',han:'1翻',desc:'門前でテンパイ時に「リーチ」と宣言。1000点棒を場に出す。宣言後は手牌変更不可。'},
   {name:'一発',kanji:'一発',han:'1翻',desc:'リーチ宣言後、1巡以内にアガること。途中で鳴きが入ると無効。'},
@@ -226,12 +233,43 @@ function analyzeHand(hand,sit){
   return {tile,explanation:'【牌理分析】'+exp+extra};
 }
 
+// ========== 何切る 厳選プリセット ==========
+const presetQuestions = [
+  {
+    hand: ['🀇','🀈','🀉','🀊','🀋','🀌','🀍','🀎','🀏','🀙','🀚','🀛','🀀','🀀'],
+    correct: '🀀', waits: ['🀀'],
+    explanation: '純正九蓮宝燈のイーシャンテン！東を落とせばテンパイ。'
+  },
+  {
+    hand: ['🀛','🀜','🀝','🀝','🀞','🀟','🀟','🀟','🀐','🀑','🀒','🀓','🀔','🀕'],
+    correct: '🀝', waits: ['🀚','🀝','🀠'],
+    explanation: '筒子の形に注目。三筒を切れば二筒・三筒・五筒・八筒の多面待ちになります（三面張）。'
+  },
+  {
+    hand: ['🀇','🀇','🀈','🀈','🀉','🀉','🀙','🀙','🀚','🀚','🀛','🀛','🀀','🀁'],
+    correct: '🀁', waits: ['🀀'],
+    explanation: '七対子か二盃口のイーシャンテン。孤立している風牌を処理します。'
+  },
+  {
+    hand: ['🀇','🀈','🀉','🀋','🀌','🀍','🀙','🀚','🀛','🀐','🀑','🀒','🀓','🀔'],
+    correct: '🀓', waits: ['🀒','🀕'],
+    explanation: '完全イーシャンテンの形。三索を切ることで両面待ち（二索・五索）が確定します。'
+  }
+];
+
 function genQuestion(){
+  if(Math.random()<0.3){
+    const pq = presetQuestions[Math.floor(Math.random()*presetQuestions.length)];
+    return {
+      situation: {round:'東1局',wind:'東家',turn:Math.floor(Math.random()*6)+6,score:'25000',dora:tileOrder[Math.floor(Math.random()*tileOrder.length)]},
+      hand: [...pq.hand], correct: pq.correct, waits: pq.waits || [], explanation: '【厳選良問】\n'+pq.explanation
+    };
+  }
   const w=createWall(); let h=w.slice(0,14); const dora=w[14];
   h.sort((a,b)=>tileOrder.indexOf(a)-tileOrder.indexOf(b));
   const sit={round:roundPool[Math.floor(Math.random()*roundPool.length)],wind:windPool[Math.floor(Math.random()*windPool.length)],score:scorePool[Math.floor(Math.random()*scorePool.length)],turn:turnPool[Math.floor(Math.random()*turnPool.length)],dora};
   const a=analyzeHand(h,sit);
-  return {situation:sit,hand:h,correct:a.tile,explanation:a.explanation};
+  return {situation:sit,hand:h,correct:a.tile,waits:['?'],explanation:a.explanation};
 }
 
 // ========== Vue App ==========
@@ -269,6 +307,35 @@ createApp({
     const showExpl=ref(false);
     const judgment=ref(null);
 
+    // XP & 段位
+    const totalXP=ref(0);
+    const currentRank=computed(()=>{
+      let r=ranks[0];
+      for(let i=0;i<ranks.length;i++){if(totalXP.value>=ranks[i].xp) r=ranks[i]; else break;}
+      return r;
+    });
+    const nextRank=computed(()=>{
+      for(let i=0;i<ranks.length;i++){if(totalXP.value<ranks[i].xp) return ranks[i];}
+      return null;
+    });
+    const xpProgress=computed(()=>{
+      if(!nextRank.value) return 100;
+      let currRankXP=0;
+      for(let i=ranks.length-1;i>=0;i--){if(totalXP.value>=ranks[i].xp){currRankXP=ranks[i].xp;break;}}
+      const needed = nextRank.value.xp - currRankXP;
+      const earned = totalXP.value - currRankXP;
+      return Math.floor((earned/needed)*100);
+    });
+
+    function addXP(amount){
+      const oldRank = currentRank.value.title;
+      totalXP.value+=amount;
+      localStorage.setItem('mahjongXP', totalXP.value);
+      if(currentRank.value.title !== oldRank){
+        setTimeout(()=>{sfxUnlock();screenFlash('green');showComboPop('昇段: '+currentRank.value.title);}, 500);
+      }
+    }
+
     // 計算
     const currentTiles=computed(()=>suitTiles[tileTab.value]||[]);
     const filteredYaku=computed(()=>yakuData.filter(y=>y.han===yakuTab.value));
@@ -279,6 +346,8 @@ createApp({
       if(s){const d=JSON.parse(s);unlockedStep.value=d.unlocked||1;stepCleared.value=d.cleared||{1:false,2:false,3:false};}
       const hs=localStorage.getItem('mahjongHighScore');
       if(hs) highScore.value=parseInt(hs,10);
+      const savedXP=localStorage.getItem('mahjongXP');
+      if(savedXP) totalXP.value=parseInt(savedXP,10);
     });
 
     function saveProgress(){localStorage.setItem('mjStep',JSON.stringify({unlocked:unlockedStep.value,cleared:stepCleared.value}));}
@@ -332,11 +401,19 @@ createApp({
     function selectTile(t){
       if(selectedTile.value||page.value!=='game') return;
       sfxClick();selectedTile.value=t;
-      if(t===currentQ.value.correct){judgment.value='correct';combo.value++;score.value+=activeMode.value==='practice'?1:100*combo.value;
+      if(t===currentQ.value.correct){
+        judgment.value='correct';combo.value++;
+        let gain=activeMode.value==='practice'?1:100*combo.value;
+        score.value+=gain;
+        addXP(activeMode.value==='practice'?5:10*combo.value); // XP追加
         sfxCorrect();screenFlash('green');spawnConfetti(25);
         if(combo.value>=3){sfxCombo();showComboPop(combo.value);}
-      } else{judgment.value='incorrect';combo.value=0;sfxWrong();screenShake();screenFlash('red');
-        if(activeMode.value==='survival'){lives.value--;if(lives.value<=0)setTimeout(endGame,1500);}}
+      } else{
+        judgment.value='incorrect';combo.value=0;
+        addXP(1); // 失敗でも1XP
+        sfxWrong();screenShake();screenFlash('red');
+        if(activeMode.value==='survival'){lives.value--;if(lives.value<=0)setTimeout(endGame,1500);}
+      }
       showExpl.value=true;
     }
 
@@ -375,6 +452,7 @@ createApp({
       activeMode,timeLeft,score,lives,combo,highScore,isNewRecord,
       questionCount,currentQ,selectedTile,showExpl,judgment,
       currentTiles,filteredYaku,soundEnabled,
+      totalXP,currentRank,nextRank,xpProgress,
       suitTiles,tileInfo,yakuData,hanCategories,tileOrder,td,tileDisplay,
       goStep,startQuiz,selectQuizAnswer,nextQuizQ,
       startGame,selectTile,nextQuestion,endGame,goHome,toggleExpl,stepStatus,toggleSound

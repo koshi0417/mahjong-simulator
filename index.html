@@ -12,8 +12,17 @@
 <canvas id="confetti-canvas"></canvas>
 <div id="app" class="app">
   <header>
-    <h1 @click="goHome()">🀄 麻雀道場</h1>
-    <p class="subtitle">〜 初心者から何切るマスターへ 〜</p>
+    <div class="header-top">
+      <h1 @click="goHome()">🀄 麻雀道場</h1>
+      <p class="subtitle">〜 初心者から何切るマスターへ 〜</p>
+    </div>
+    <div class="player-profile" v-if="page!=='home'">
+      <div class="rank-badge">{{currentRank.title}}</div>
+      <div class="xp-container">
+        <div class="xp-text">XP: {{totalXP}} <span class="xp-next" v-if="nextRank">/ NEXT: {{nextRank.xp}}</span></div>
+        <div class="xp-bar-bg"><div class="xp-bar-fill" :style="{width: xpProgress + '%'}"></div></div>
+      </div>
+    </div>
   </header>
   <button class="sound-toggle" @click="toggleSound()">{{ soundEnabled ? '🔊 ON' : '🔇 OFF' }}</button>
 
@@ -261,8 +270,19 @@
       <button v-if="!selectedTile" class="btn btn-primary" @click="toggleExpl()">{{showExpl?'解説を閉じる':'解答を見る'}}</button>
       <div v-if="showExpl" class="explanation-box">
         <h3>【正解】{{tileInfo[currentQ.correct].name}} 切り</h3>
-        <p>{{currentQ.explanation}}</p>
-        <hr style="margin:12px 0;border:0;border-top:1px solid rgba(255,255,255,.1);">
+        <p style="white-space:pre-wrap; line-height:1.5;">{{currentQ.explanation}}</p>
+        
+        <div class="waits-box" v-if="currentQ.waits && currentQ.waits.length>0 && currentQ.waits[0]!=='?'">
+          <h4>💡 待ち牌</h4>
+          <div class="waits-tiles">
+            <div v-for="(wt, i) in currentQ.waits" :key="'w'+i" class="mtile mtile-sm no-hover" :class="td(wt).sc">
+              <span class="mtile-char">{{td(wt).c}}</span>
+              <span class="mtile-suit" v-if="td(wt).s">{{td(wt).s}}</span>
+            </div>
+          </div>
+        </div>
+
+        <hr style="margin:16px 0;border:0;border-top:1px solid rgba(255,255,255,.1);">
         <button class="btn btn-warning" @click="nextQuestion()">次の問題へ ➡️</button>
       </div>
     </div>
