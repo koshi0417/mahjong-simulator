@@ -323,7 +323,39 @@ createApp({
   setup(){
     const page=ref('home');
     const unlockedStep=ref(1);
-    const stepCleared=ref({1:false,2:false,3:false});
+    const stepCleared=ref({1:false,2:false,3:false,4:false,6:false});
+
+    // ========== Phase 4: 実績システム ==========
+    const achievements = ref([
+      { id: 'first_play', name: '初めの一歩', desc: '初めて何切るをプレイする', icon: '🐣', unlocked: false },
+      { id: 'combo_5', name: 'コンボメイカー', desc: '何切るで5コンボ達成', icon: '🔥', unlocked: false },
+      { id: 'survival_5000', name: 'サバイバー', desc: 'サバイバルでスコア5000達成', icon: '❤️‍🔥', unlocked: false },
+      { id: 'quiz_master', name: 'クイズ王', desc: 'いずれかのクイズで満点を取る', icon: '👑', unlocked: false },
+      { id: 'rank_up', name: '初昇段', desc: '九級に到達する', icon: '🔰', unlocked: false }
+    ]);
+    const showAchieveModal = ref(false);
+
+    function checkAchievement(id) {
+      const ach = achievements.value.find(a => a.id === id);
+      if (ach && !ach.unlocked) {
+        ach.unlocked = true;
+        saveAchievements();
+        sfxUnlock();
+        showComboPop('実績解除: ' + ach.name + ' ' + ach.icon);
+        addXP(100); // 実績解除ボーナス
+      }
+    }
+
+    function saveAchievements() {
+      localStorage.setItem('mahjongAchievements', JSON.stringify(achievements.value.map(a => ({ id: a.id, unlocked: a.unlocked }))));
+    }
+
+    function shareToX(text) {
+      const url = encodeURIComponent('https://koshi0417.github.io/mahjong-simulator/');
+      const textEnc = encodeURIComponent(text + '\n#麻雀道場 #何切る #麻雀');
+      window.open(`https://twitter.com/intent/tweet?text=${textEnc}&url=${url}`, '_blank');
+    }
+    // =========================================
 
     // タブ
     const tileTab=ref('萬子');
@@ -393,6 +425,15 @@ createApp({
       if(hs) highScore.value=parseInt(hs,10);
       const savedXP=localStorage.getItem('mahjongXP');
       if(savedXP) totalXP.value=parseInt(savedXP,10);
+      
+      const savedAch = localStorage.getItem('mahjongAchievements');
+      if (savedAch) {
+        const parsed = JSON.parse(savedAch);
+        parsed.forEach(pa => {
+          const ach = achievements.value.find(a => a.id === pa.id);
+          if (ach) ach.unlocked = pa.unlocked;
+        });
+      }
     });
 
     function saveProgress(){localStorage.setItem('mjStep',JSON.stringify({unlocked:unlockedStep.value,cleared:stepCleared.value}));}
@@ -438,6 +479,7 @@ createApp({
           }
           saveProgress();spawnConfetti(60);
           addXP(50); // クイズクリアボーナス
+          if(quizScore.value===10) checkAchievement('quiz_master');
         }
         page.value='quiz-result';
       }
@@ -450,6 +492,7 @@ createApp({
       else if(mode==='timeAttack'){timeLeft.value=60;timerId=setInterval(()=>{timeLeft.value--;if(timeLeft.value<=0)endGame();},1000);}
       currentQ.value=genQuestion(); selectedTile.value=null; showExpl.value=false; judgment.value=null;
       page.value='game';
+      checkAchievement('first_play');
     }
 
     function selectTile(t){
@@ -462,6 +505,8 @@ createApp({
         addXP(activeMode.value==='practice'?5:10*combo.value); // XP追加
         sfxCorrect();screenFlash('green');spawnConfetti(25);
         if(combo.value>=3){sfxCombo();showComboPop(combo.value);}
+        if(combo.value>=5) checkAchievement('combo_5');
+        if(activeMode.value==='survival' && score.value>=5000) checkAchievement('survival_5000');
       } else{
         judgment.value='incorrect';combo.value=0;
         addXP(1); // 失敗でも1XP
@@ -509,6 +554,7 @@ createApp({
       currentTiles,filteredYaku,soundEnabled,
       totalXP,currentRank,nextRank,xpProgress,
       suitTiles,tileInfo,yakuData,hanCategories,tileOrder,td,tileDisplay,
+      achievements,showAchieveModal,shareToX,
       goStep,startQuiz,selectQuizAnswer,nextQuizQ,
       startGame,selectTile,nextQuestion,endGame,goHome,toggleExpl,stepStatus,toggleSound
     };

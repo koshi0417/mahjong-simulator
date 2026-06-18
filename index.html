@@ -18,13 +18,14 @@
     </div>
     <div class="player-profile" v-if="page!=='home'">
       <div class="rank-badge">{{currentRank.title}}</div>
-      <div class="xp-container">
+      <div class="xp-container" style="cursor:pointer;" @click="showAchieveModal=true" title="実績を見る">
         <div class="xp-text">XP: {{totalXP}} <span class="xp-next" v-if="nextRank">/ NEXT: {{nextRank.xp}}</span></div>
         <div class="xp-bar-bg"><div class="xp-bar-fill" :style="{width: xpProgress + '%'}"></div></div>
       </div>
     </div>
   </header>
   <button class="sound-toggle" @click="toggleSound()">{{ soundEnabled ? '🔊 ON' : '🔇 OFF' }}</button>
+  <button class="achieve-btn" v-if="page==='home'" @click="showAchieveModal=true">🏆 実績</button>
 
   <!-- HOME -->
   <div v-if="page==='home'" class="page-transition">
@@ -235,7 +236,8 @@
     <p class="result-msg" v-else>7問以上正解で次のSTEPに進めます。<br>もう一度学習してから再チャレンジ！</p>
     <p v-if="quizScore>=7&&quizStep<4" class="unlock-msg">🔓 STEP {{quizStep+1}} が解放されました！</p>
     <div class="btn-group">
-      <button class="btn btn-primary" @click="startQuiz(quizStep)">🔄 もう一度</button>
+      <button class="btn btn-primary" @click="shareToX(`麻雀道場のSTEP ${quizStep}クイズで ${quizScore}点 を取りました！`)">🐦 結果をシェア</button>
+      <button class="btn btn-warning" @click="startQuiz(quizStep)">🔄 もう一度</button>
       <button class="btn btn-back" v-if="quizScore<7" @click="page='step'+quizStep+'-learn'">📖 復習する</button>
       <button class="btn btn-success" @click="goHome()">🏠 ホームに戻る</button>
     </div>
@@ -341,9 +343,29 @@
     <p class="score-text">最終結果<br><span class="score-number">{{score}}</span> {{activeMode==='practice'?'問正解':'pt'}}</p>
     <p v-if="isNewRecord&&activeMode==='survival'" class="perfect-msg">🎉 自己ベスト更新！ 🎉</p>
     <div class="btn-group" style="margin-top:20px;">
+      <button class="btn btn-primary" v-if="activeMode==='survival'" @click="shareToX(`麻雀道場の「何切るサバイバル」でスコア ${score}pt を獲得しました！`)">🐦 結果をシェア</button>
+      <button class="btn btn-warning" @click="startGame(activeMode)">🔄 もう一度</button>
       <button class="btn btn-success" @click="goHome()">🏠 ホームに戻る</button>
     </div>
   </div>
+
+  <!-- 実績モーダル -->
+  <div class="modal-overlay" v-if="showAchieveModal" @click.self="showAchieveModal=false">
+    <div class="modal-content">
+      <h2 style="color:#ffd200;margin-bottom:16px;">🏆 獲得した実績</h2>
+      <div class="achieve-list">
+        <div class="achieve-card" v-for="a in achievements" :key="a.id" :class="{locked:!a.unlocked}">
+          <div class="achieve-icon">{{a.unlocked ? a.icon : '🔒'}}</div>
+          <div class="achieve-info">
+            <div class="achieve-name">{{a.unlocked ? a.name : '？？？'}}</div>
+            <div class="achieve-desc">{{a.unlocked ? a.desc : '未解放の実績です'}}</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-back" style="margin-top:20px;width:100%;" @click="showAchieveModal=false">閉じる</button>
+    </div>
+  </div>
+
 </div>
 <script src="app.js"></script>
 </body>
