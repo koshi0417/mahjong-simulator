@@ -1,4 +1,70 @@
-// ========== 牌データ ==========
+// ========== 牌表示データ ==========
+const tileDisplay={
+'🀇':{c:'一',s:'萬',sc:'suit-man'},'🀈':{c:'二',s:'萬',sc:'suit-man'},'🀉':{c:'三',s:'萬',sc:'suit-man'},
+'🀊':{c:'四',s:'萬',sc:'suit-man'},'🀋':{c:'五',s:'萬',sc:'suit-man'},'🀌':{c:'六',s:'萬',sc:'suit-man'},
+'🀍':{c:'七',s:'萬',sc:'suit-man'},'🀎':{c:'八',s:'萬',sc:'suit-man'},'🀏':{c:'九',s:'萬',sc:'suit-man'},
+'🀙':{c:'一',s:'筒',sc:'suit-pin'},'🀚':{c:'二',s:'筒',sc:'suit-pin'},'🀛':{c:'三',s:'筒',sc:'suit-pin'},
+'🀜':{c:'四',s:'筒',sc:'suit-pin'},'🀝':{c:'五',s:'筒',sc:'suit-pin'},'🀞':{c:'六',s:'筒',sc:'suit-pin'},
+'🀟':{c:'七',s:'筒',sc:'suit-pin'},'🀠':{c:'八',s:'筒',sc:'suit-pin'},'🀡':{c:'九',s:'筒',sc:'suit-pin'},
+'🀐':{c:'一',s:'索',sc:'suit-sou'},'🀑':{c:'二',s:'索',sc:'suit-sou'},'🀒':{c:'三',s:'索',sc:'suit-sou'},
+'🀓':{c:'四',s:'索',sc:'suit-sou'},'🀔':{c:'五',s:'索',sc:'suit-sou'},'🀕':{c:'六',s:'索',sc:'suit-sou'},
+'🀖':{c:'七',s:'索',sc:'suit-sou'},'🀗':{c:'八',s:'索',sc:'suit-sou'},'🀘':{c:'九',s:'索',sc:'suit-sou'},
+'🀀':{c:'東',s:'',sc:'suit-wind'},'🀁':{c:'南',s:'',sc:'suit-wind'},'🀂':{c:'西',s:'',sc:'suit-wind'},'🀃':{c:'北',s:'',sc:'suit-wind'},
+'🀄':{c:'中',s:'',sc:'suit-drgR'},'🀅':{c:'發',s:'',sc:'suit-drgG'},'🀆':{c:'白',s:'',sc:'suit-drgW'}
+};
+function td(t){return tileDisplay[t]||{c:'?',s:'',sc:''};}
+
+// ========== サウンド ==========
+let audioCtx=null;
+let soundOn=true;
+function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
+function playTone(freq,type,dur,vol){
+  if(!soundOn||!audioCtx)return;
+  const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+  o.connect(g);g.connect(audioCtx.destination);
+  o.frequency.value=freq;o.type=type||'sine';
+  g.gain.setValueAtTime(vol||.06,audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);
+  o.start();o.stop(audioCtx.currentTime+dur);
+}
+function sfxClick(){initAudio();playTone(900,'square',.04,.04);}
+function sfxCorrect(){initAudio();[523,659,784].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',.15,.07),i*70));}
+function sfxWrong(){initAudio();playTone(180,'sawtooth',.25,.06);}
+function sfxCombo(){initAudio();[659,784,988,1175].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',.12,.06),i*50));}
+function sfxUnlock(){initAudio();[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'triangle',.2,.07),i*100));}
+
+// ========== 紙吹雪 ==========
+let confettiParts=[],confettiAnim=false;
+function spawnConfetti(n){
+  const cv=document.getElementById('confetti-canvas');if(!cv)return;
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  const cols=['#ffd200','#e53935','#4caf50','#2196f3','#ff9800','#9c27b0','#00bcd4'];
+  for(let i=0;i<(n||40);i++)confettiParts.push({x:Math.random()*cv.width,y:-20-Math.random()*40,vx:(Math.random()-.5)*5,vy:Math.random()*3+2,sz:Math.random()*7+4,col:cols[Math.floor(Math.random()*cols.length)],rot:Math.random()*360,rs:(Math.random()-.5)*8,life:1});
+  if(!confettiAnim){confettiAnim=true;animConfetti();}
+}
+function animConfetti(){
+  const cv=document.getElementById('confetti-canvas');if(!cv){confettiAnim=false;return;}
+  const ctx=cv.getContext('2d');ctx.clearRect(0,0,cv.width,cv.height);
+  confettiParts=confettiParts.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.08;p.rot+=p.rs;p.life-=.008;
+    if(p.life<=0)return false;
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.globalAlpha=p.life;
+    ctx.fillStyle=p.col;ctx.fillRect(-p.sz/2,-p.sz/2,p.sz,p.sz/2);ctx.restore();return p.y<cv.height+20;
+  });
+  if(confettiParts.length>0)requestAnimationFrame(animConfetti);else{confettiAnim=false;ctx.clearRect(0,0,cv.width,cv.height);}
+}
+
+// ========== 画面エフェクト ==========
+function screenShake(){const el=document.getElementById('app');el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),400);}
+function screenFlash(color){
+  let fl=document.getElementById('screen-flash');if(!fl){fl=document.createElement('div');fl.id='screen-flash';fl.className='screen-flash';document.body.appendChild(fl);}
+  fl.className='screen-flash '+color;setTimeout(()=>fl.className='screen-flash',300);
+}
+function showComboPop(n){
+  const el=document.createElement('div');el.className='combo-big';el.textContent=n+' COMBO! 🔥';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+}
+
+// ========== 牌データ =
 const tileOrder = ['🀇','🀈','🀉','🀊','🀋','🀌','🀍','🀎','🀏','🀙','🀚','🀛','🀜','🀝','🀞','🀟','🀠','🀡','🀐','🀑','🀒','🀓','🀔','🀕','🀖','🀗','🀘','🀀','🀁','🀂','🀃','🀄','🀅','🀆'];
 const tileInfo = {
   '🀇':{name:'一萬',reading:'いちまん',suit:'萬子'},'🀈':{name:'二萬',reading:'にまん',suit:'萬子'},'🀉':{name:'三萬',reading:'さんまん',suit:'萬子'},
@@ -234,8 +300,9 @@ createApp({
 
     function selectQuizAnswer(opt){
       if(quizSel.value!==null) return;
-      quizSel.value=opt;
-      if(opt===currentQuiz.value.correct) quizScore.value++;
+      sfxClick();quizSel.value=opt;
+      if(opt===currentQuiz.value.correct){quizScore.value++;sfxCorrect();screenFlash('green');spawnConfetti(20);}
+      else{sfxWrong();screenShake();screenFlash('red');}
     }
 
     function nextQuizQ(){
@@ -245,9 +312,9 @@ createApp({
         if(passed){
           stepCleared.value[quizStep.value]=true;
           if(quizStep.value<4&&quizStep.value>=unlockedStep.value){
-            unlockedStep.value=quizStep.value+1;
+            unlockedStep.value=quizStep.value+1;sfxUnlock();
           }
-          saveProgress();
+          saveProgress();spawnConfetti(60);
         }
         page.value='quiz-result';
       }
@@ -264,9 +331,12 @@ createApp({
 
     function selectTile(t){
       if(selectedTile.value||page.value!=='game') return;
-      selectedTile.value=t;
-      if(t===currentQ.value.correct){judgment.value='correct';combo.value++;score.value+=activeMode.value==='practice'?1:100*combo.value;}
-      else{judgment.value='incorrect';combo.value=0;if(activeMode.value==='survival'){lives.value--;if(lives.value<=0)setTimeout(endGame,1500);}}
+      sfxClick();selectedTile.value=t;
+      if(t===currentQ.value.correct){judgment.value='correct';combo.value++;score.value+=activeMode.value==='practice'?1:100*combo.value;
+        sfxCorrect();screenFlash('green');spawnConfetti(25);
+        if(combo.value>=3){sfxCombo();showComboPop(combo.value);}
+      } else{judgment.value='incorrect';combo.value=0;sfxWrong();screenShake();screenFlash('red');
+        if(activeMode.value==='survival'){lives.value--;if(lives.value<=0)setTimeout(endGame,1500);}}
       showExpl.value=true;
     }
 
@@ -296,15 +366,18 @@ createApp({
       return 'locked';
     }
 
+    const soundEnabled=ref(true);
+    function toggleSound(){soundEnabled.value=!soundEnabled.value;soundOn=soundEnabled.value;}
+
     return {
       page,unlockedStep,stepCleared,tileTab,yakuTab,
       quizStep,quizQs,quizIdx,quizScore,quizSel,currentQuiz,
       activeMode,timeLeft,score,lives,combo,highScore,isNewRecord,
       questionCount,currentQ,selectedTile,showExpl,judgment,
-      currentTiles,filteredYaku,
-      suitTiles,tileInfo,yakuData,hanCategories,tileOrder,
+      currentTiles,filteredYaku,soundEnabled,
+      suitTiles,tileInfo,yakuData,hanCategories,tileOrder,td,tileDisplay,
       goStep,startQuiz,selectQuizAnswer,nextQuizQ,
-      startGame,selectTile,nextQuestion,endGame,goHome,toggleExpl,stepStatus
+      startGame,selectTile,nextQuestion,endGame,goHome,toggleExpl,stepStatus,toggleSound
     };
   }
 }).mount('#app');

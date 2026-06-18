@@ -9,66 +9,46 @@
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 </head>
 <body>
+<canvas id="confetti-canvas"></canvas>
 <div id="app" class="app">
   <header>
-    <h1 @click="goHome()" style="cursor:pointer;">🀄 麻雀道場</h1>
+    <h1 @click="goHome()">🀄 麻雀道場</h1>
     <p class="subtitle">〜 初心者から何切るマスターへ 〜</p>
   </header>
+  <button class="sound-toggle" @click="toggleSound()">{{ soundEnabled ? '🔊 ON' : '🔇 OFF' }}</button>
 
-  <!-- ==================== HOME ==================== -->
-  <div v-if="page==='home'" class="fade-in">
+  <!-- HOME -->
+  <div v-if="page==='home'" class="page-transition">
     <div class="step-roadmap">
-      <div class="step-card" :class="{locked: stepStatus(1)==='locked'}" @click="goStep(1)">
+      <div class="step-card" :class="{locked:stepStatus(1)==='locked'}" @click="goStep(1)">
         <div class="step-icon">🀄</div>
-        <div class="step-body">
-          <h3>STEP 1 — 牌を覚えよう</h3>
-          <p>麻雀牌の種類と名前をマスター</p>
-        </div>
-        <span class="step-badge" :class="stepStatus(1)">
-          {{ stepStatus(1)==='cleared'?'✅ クリア': stepStatus(1)==='unlocked'?'🔓 挑戦可':'🔒' }}
-        </span>
+        <div class="step-body"><h3>STEP 1 — 牌を覚えよう</h3><p>麻雀牌の種類と名前をマスター</p></div>
+        <span class="step-badge" :class="stepStatus(1)">{{stepStatus(1)==='cleared'?'✅ クリア':stepStatus(1)==='unlocked'?'🔓 挑戦可':'🔒'}}</span>
       </div>
       <div class="step-connector">▼</div>
-      <div class="step-card" :class="{locked: stepStatus(2)==='locked'}" @click="goStep(2)">
+      <div class="step-card" :class="{locked:stepStatus(2)==='locked'}" @click="goStep(2)">
         <div class="step-icon">📐</div>
-        <div class="step-body">
-          <h3>STEP 2 — 面子を作ろう</h3>
-          <p>順子・刻子・雀頭を理解する</p>
-        </div>
-        <span class="step-badge" :class="stepStatus(2)">
-          {{ stepStatus(2)==='cleared'?'✅ クリア': stepStatus(2)==='unlocked'?'🔓 挑戦可':'🔒' }}
-        </span>
+        <div class="step-body"><h3>STEP 2 — 面子を作ろう</h3><p>順子・刻子・雀頭を理解する</p></div>
+        <span class="step-badge" :class="stepStatus(2)">{{stepStatus(2)==='cleared'?'✅ クリア':stepStatus(2)==='unlocked'?'🔓 挑戦可':'🔒'}}</span>
       </div>
       <div class="step-connector">▼</div>
-      <div class="step-card" :class="{locked: stepStatus(3)==='locked'}" @click="goStep(3)">
+      <div class="step-card" :class="{locked:stepStatus(3)==='locked'}" @click="goStep(3)">
         <div class="step-icon">🏆</div>
-        <div class="step-body">
-          <h3>STEP 3 — 役を覚えよう</h3>
-          <p>全42役を制覇して実践へ</p>
-        </div>
-        <span class="step-badge" :class="stepStatus(3)">
-          {{ stepStatus(3)==='cleared'?'✅ クリア': stepStatus(3)==='unlocked'?'🔓 挑戦可':'🔒' }}
-        </span>
+        <div class="step-body"><h3>STEP 3 — 役を覚えよう</h3><p>全42役を制覇して実践へ</p></div>
+        <span class="step-badge" :class="stepStatus(3)">{{stepStatus(3)==='cleared'?'✅ クリア':stepStatus(3)==='unlocked'?'🔓 挑戦可':'🔒'}}</span>
       </div>
       <div class="step-connector">▼</div>
-      <div class="step-card" :class="{locked: unlockedStep < 4}" @click="goStep(4)">
+      <div class="step-card" :class="{locked:unlockedStep<4}" @click="goStep(4)">
         <div class="step-icon">🔥</div>
-        <div class="step-body">
-          <h3>STEP 4 — 何切るに挑戦！</h3>
-          <p>学んだ知識を実践で試す</p>
-        </div>
-        <span class="step-badge" :class="unlockedStep>=4?'unlocked':'lock'">
-          {{ unlockedStep>=4?'🔓 挑戦可':'🔒' }}
-        </span>
+        <div class="step-body"><h3>STEP 4 — 何切るに挑戦！</h3><p>学んだ知識を実践で試す</p></div>
+        <span class="step-badge" :class="unlockedStep>=4?'unlocked':'lock'">{{unlockedStep>=4?'🔓 挑戦可':'🔒'}}</span>
       </div>
     </div>
-    <p v-if="highScore>0" class="high-score-display" style="text-align:center;margin-top:20px;">
-      🏆 何切るサバイバル最高記録: {{ highScore }} pt
-    </p>
+    <p v-if="highScore>0" class="high-score-display" style="text-align:center;margin-top:20px;">🏆 何切るサバイバル最高記録: {{highScore}} pt</p>
   </div>
 
-  <!-- ==================== STEP1 学習 ==================== -->
-  <div v-if="page==='step1-learn'" class="fade-in">
+  <!-- STEP1 学習 -->
+  <div v-if="page==='step1-learn'" class="page-transition">
     <div class="page-header">
       <button class="btn btn-back" @click="goHome()">← 戻る</button>
       <h2>🀄 STEP 1 — 牌を覚えよう</h2>
@@ -78,13 +58,16 @@
       <p>麻雀には全部で34種類の牌があり、それぞれ4枚ずつ、合計136枚を使います。大きく分けると<strong style="color:#ffd200;">数牌</strong>（萬子・筒子・索子）と<strong style="color:#ffd200;">字牌</strong>（風牌・三元牌）の2種類があります。</p>
     </div>
     <div class="tabs">
-      <span class="tab" :class="{active:tileTab===s}" v-for="s in ['萬子','筒子','索子','字牌']" :key="s" @click="tileTab=s">{{ s }}</span>
+      <span class="tab" :class="{active:tileTab===s}" v-for="s in ['萬子','筒子','索子','字牌']" :key="s" @click="tileTab=s">{{s}}</span>
     </div>
     <div class="tile-grid">
       <div class="tile-cell" v-for="t in currentTiles" :key="t">
-        <div class="tile">{{ t }}</div>
-        <span class="tile-name">{{ tileInfo[t].name }}</span>
-        <span class="tile-reading">{{ tileInfo[t].reading }}</span>
+        <div class="mtile no-hover" :class="td(t).sc">
+          <span class="mtile-char">{{td(t).c}}</span>
+          <span class="mtile-suit" v-if="td(t).s">{{td(t).s}}</span>
+        </div>
+        <span class="tile-name">{{tileInfo[t].name}}</span>
+        <span class="tile-reading">{{tileInfo[t].reading}}</span>
       </div>
     </div>
     <div style="text-align:center;margin-top:20px;">
@@ -92,8 +75,8 @@
     </div>
   </div>
 
-  <!-- ==================== STEP2 学習 ==================== -->
-  <div v-if="page==='step2-learn'" class="fade-in">
+  <!-- STEP2 学習 -->
+  <div v-if="page==='step2-learn'" class="page-transition">
     <div class="page-header">
       <button class="btn btn-back" @click="goHome()">← 戻る</button>
       <h2>📐 STEP 2 — 面子を作ろう</h2>
@@ -106,9 +89,13 @@
       <h3>📘 順子（シュンツ）— 連続する数牌3枚</h3>
       <p>同じ種類の数牌で、連続する3つの数字を揃えた組み合わせ。</p>
       <div class="example-tiles">
-        <div class="tile">🀇</div><div class="tile">🀈</div><div class="tile">🀉</div>
-        <span style="color:#aaa;font-size:20px;align-self:center;margin:0 8px;">や</span>
-        <div class="tile">🀜</div><div class="tile">🀝</div><div class="tile">🀞</div>
+        <div class="mtile mtile-sm suit-man"><span class="mtile-char">一</span><span class="mtile-suit">萬</span></div>
+        <div class="mtile mtile-sm suit-man"><span class="mtile-char">二</span><span class="mtile-suit">萬</span></div>
+        <div class="mtile mtile-sm suit-man"><span class="mtile-char">三</span><span class="mtile-suit">萬</span></div>
+        <span style="color:#aaa;font-size:18px;margin:0 8px;">や</span>
+        <div class="mtile mtile-sm suit-pin"><span class="mtile-char">四</span><span class="mtile-suit">筒</span></div>
+        <div class="mtile mtile-sm suit-pin"><span class="mtile-char">五</span><span class="mtile-suit">筒</span></div>
+        <div class="mtile mtile-sm suit-pin"><span class="mtile-char">六</span><span class="mtile-suit">筒</span></div>
       </div>
       <p>※ 字牌では順子は作れません。9→1とつながることもありません。</p>
     </div>
@@ -116,16 +103,21 @@
       <h3>📗 刻子（コーツ）— 同じ牌3枚</h3>
       <p>まったく同じ牌を3枚集めた組み合わせ。字牌でも作れます。</p>
       <div class="example-tiles">
-        <div class="tile">🀋</div><div class="tile">🀋</div><div class="tile">🀋</div>
-        <span style="color:#aaa;font-size:20px;align-self:center;margin:0 8px;">や</span>
-        <div class="tile">🀄</div><div class="tile">🀄</div><div class="tile">🀄</div>
+        <div class="mtile mtile-sm suit-man"><span class="mtile-char">五</span><span class="mtile-suit">萬</span></div>
+        <div class="mtile mtile-sm suit-man"><span class="mtile-char">五</span><span class="mtile-suit">萬</span></div>
+        <div class="mtile mtile-sm suit-man"><span class="mtile-char">五</span><span class="mtile-suit">萬</span></div>
+        <span style="color:#aaa;font-size:18px;margin:0 8px;">や</span>
+        <div class="mtile mtile-sm suit-drgR"><span class="mtile-char">中</span></div>
+        <div class="mtile mtile-sm suit-drgR"><span class="mtile-char">中</span></div>
+        <div class="mtile mtile-sm suit-drgR"><span class="mtile-char">中</span></div>
       </div>
     </div>
     <div class="learn-section">
       <h3>📙 雀頭（ジャントウ）— 同じ牌2枚</h3>
       <p>同じ牌のペア。「アタマ」とも呼ばれます。アガリには必ず1組必要です。</p>
       <div class="example-tiles">
-        <div class="tile">🀁</div><div class="tile">🀁</div>
+        <div class="mtile mtile-sm suit-wind"><span class="mtile-char">南</span></div>
+        <div class="mtile mtile-sm suit-wind"><span class="mtile-char">南</span></div>
       </div>
     </div>
     <div style="text-align:center;margin-top:20px;">
@@ -133,8 +125,8 @@
     </div>
   </div>
 
-  <!-- ==================== STEP3 学習 ==================== -->
-  <div v-if="page==='step3-learn'" class="fade-in">
+  <!-- STEP3 学習 -->
+  <div v-if="page==='step3-learn'" class="page-transition">
     <div class="page-header">
       <button class="btn btn-back" @click="goHome()">← 戻る</button>
       <h2>🏆 STEP 3 — 役を覚えよう</h2>
@@ -144,15 +136,15 @@
       <p>麻雀でアガるには最低1つの「役」が必要です。役によって翻数（得点の倍率）が異なります。全役をここで確認しましょう！</p>
     </div>
     <div class="tabs">
-      <span class="tab" :class="{active:yakuTab===c}" v-for="c in hanCategories" :key="c" @click="yakuTab=c">{{ c }}</span>
+      <span class="tab" :class="{active:yakuTab===c}" v-for="c in hanCategories" :key="c" @click="yakuTab=c">{{c}}</span>
     </div>
     <div class="yaku-list">
       <div class="yaku-card" v-for="y in filteredYaku" :key="y.name">
         <div class="yaku-header">
-          <span><span class="yaku-name">{{ y.name }}</span><span class="yaku-kanji">（{{ y.kanji }}）</span></span>
-          <span class="yaku-han" :class="'han-'+(y.han==='役満'?'yakuman':y.han.replace('翻',''))">{{ y.han }}</span>
+          <span><span class="yaku-name">{{y.name}}</span><span class="yaku-kanji">（{{y.kanji}}）</span></span>
+          <span class="yaku-han" :class="'han-'+(y.han==='役満'?'yakuman':y.han.replace('翻',''))">{{y.han}}</span>
         </div>
-        <p class="yaku-desc">{{ y.desc }}</p>
+        <p class="yaku-desc">{{y.desc}}</p>
       </div>
     </div>
     <div style="text-align:center;margin-top:20px;">
@@ -160,57 +152,51 @@
     </div>
   </div>
 
-  <!-- ==================== クイズ ==================== -->
-  <div v-if="page==='quiz'" class="fade-in quiz-area">
+  <!-- クイズ -->
+  <div v-if="page==='quiz'" class="page-transition quiz-area">
     <div class="page-header">
       <button class="btn btn-back" @click="goHome()">← 中断</button>
-      <h2>✏️ STEP {{ quizStep }} クイズ</h2>
+      <h2>✏️ STEP {{quizStep}} クイズ</h2>
     </div>
-    <div class="quiz-progress">
-      <span class="current">{{ quizIdx+1 }}</span> / 10 問　正解: {{ quizScore }}
-    </div>
+    <div class="quiz-progress"><span class="current">{{quizIdx+1}}</span> / 10 問　正解: {{quizScore}}</div>
     <div class="quiz-question">
-      <!-- STEP1: 牌表示 -->
-      <div v-if="quizStep===1" class="big-tile">{{ currentQuiz.tile }}</div>
-      <!-- STEP2: 3枚表示 -->
-      <div v-if="quizStep===2" class="quiz-tiles">
-        <div class="tile" v-for="(t,i) in currentQuiz.tiles" :key="i">{{ t }}</div>
+      <div v-if="quizStep===1" class="big-tile-area">
+        <div class="mtile mtile-big no-hover" :class="td(currentQuiz.tile).sc">
+          <span class="mtile-char">{{td(currentQuiz.tile).c}}</span>
+          <span class="mtile-suit" v-if="td(currentQuiz.tile).s">{{td(currentQuiz.tile).s}}</span>
+        </div>
       </div>
-      <p class="q-text">{{ currentQuiz.question }}</p>
-      <p v-if="quizStep===3" class="q-desc">{{ currentQuiz.question }}</p>
+      <div v-if="quizStep===2" class="quiz-tiles">
+        <div v-for="(t,i) in currentQuiz.tiles" :key="i" class="mtile mtile-quiz no-hover" :class="td(t).sc">
+          <span class="mtile-char">{{td(t).c}}</span>
+          <span class="mtile-suit" v-if="td(t).s">{{td(t).s}}</span>
+        </div>
+      </div>
+      <p class="q-text" v-if="quizStep!==3">{{currentQuiz.question}}</p>
+      <p v-if="quizStep===3" class="q-desc">{{currentQuiz.question}}</p>
     </div>
     <div class="quiz-options">
-      <div v-for="opt in currentQuiz.options" :key="opt"
-        class="quiz-option"
-        :class="{
-          correct: quizSel!==null && opt===currentQuiz.correct,
-          wrong: quizSel===opt && opt!==currentQuiz.correct,
-          disabled: quizSel!==null && opt!==quizSel && opt!==currentQuiz.correct,
-          'show-correct': quizSel!==null && quizSel!==currentQuiz.correct && opt===currentQuiz.correct
-        }"
-        @click="selectQuizAnswer(opt)">
-        {{ opt }}
-      </div>
+      <div v-for="opt in currentQuiz.options" :key="opt" class="quiz-option"
+        :class="{correct:quizSel!==null&&opt===currentQuiz.correct,wrong:quizSel===opt&&opt!==currentQuiz.correct,disabled:quizSel!==null&&opt!==quizSel&&opt!==currentQuiz.correct,'show-correct':quizSel!==null&&quizSel!==currentQuiz.correct&&opt===currentQuiz.correct}"
+        @click="selectQuizAnswer(opt)">{{opt}}</div>
     </div>
     <div v-if="quizSel!==null" class="quiz-feedback" :class="quizSel===currentQuiz.correct?'correct-fb':'wrong-fb'">
-      <p>{{ quizSel===currentQuiz.correct ? '⭕ 正解！' : '❌ 不正解...' }}</p>
-      <p>{{ currentQuiz.explain }}</p>
+      <p>{{quizSel===currentQuiz.correct?'⭕ 正解！':'❌ 不正解...'}}</p>
+      <p>{{currentQuiz.explain}}</p>
     </div>
     <div v-if="quizSel!==null" style="text-align:center;margin-top:16px;">
-      <button class="btn btn-warning" @click="nextQuizQ()">
-        {{ quizIdx < 9 ? '次の問題へ ➡️' : '結果を見る 📊' }}
-      </button>
+      <button class="btn btn-warning" @click="nextQuizQ()">{{quizIdx<9?'次の問題へ ➡️':'結果を見る 📊'}}</button>
     </div>
   </div>
 
-  <!-- ==================== クイズ結果 ==================== -->
-  <div v-if="page==='quiz-result'" class="fade-in quiz-result">
-    <div class="result-icon">{{ quizScore >= 7 ? '🎉' : '📝' }}</div>
-    <p style="font-size:16px;color:#aaa;">STEP {{ quizStep }} クイズ結果</p>
-    <p class="result-score">{{ quizScore }} / 10</p>
+  <!-- クイズ結果 -->
+  <div v-if="page==='quiz-result'" class="page-transition quiz-result">
+    <div class="result-icon">{{quizScore>=7?'🎉':'📝'}}</div>
+    <p style="font-size:16px;color:#aaa;">STEP {{quizStep}} クイズ結果</p>
+    <p class="result-score">{{quizScore}} / 10</p>
     <p class="result-msg" v-if="quizScore>=7">合格おめでとうございます！</p>
     <p class="result-msg" v-else>7問以上正解で次のSTEPに進めます。<br>もう一度学習してから再チャレンジ！</p>
-    <p v-if="quizScore>=7 && quizStep<4" class="unlock-msg">🔓 STEP {{ quizStep+1 }} が解放されました！</p>
+    <p v-if="quizScore>=7&&quizStep<4" class="unlock-msg">🔓 STEP {{quizStep+1}} が解放されました！</p>
     <div class="btn-group">
       <button class="btn btn-primary" @click="startQuiz(quizStep)">🔄 もう一度</button>
       <button class="btn btn-back" v-if="quizScore<7" @click="page='step'+quizStep+'-learn'">📖 復習する</button>
@@ -218,83 +204,79 @@
     </div>
   </div>
 
-  <!-- ==================== STEP4 モード選択 ==================== -->
-  <div v-if="page==='step4'" class="fade-in">
+  <!-- STEP4 モード選択 -->
+  <div v-if="page==='step4'" class="page-transition">
     <div class="page-header">
       <button class="btn btn-back" @click="goHome()">← 戻る</button>
       <h2>🔥 何切るに挑戦！</h2>
     </div>
-    <p v-if="highScore>0" class="high-score-display">🏆 サバイバル最高記録: {{ highScore }} pt</p>
+    <p v-if="highScore>0" class="high-score-display">🏆 サバイバル最高記録: {{highScore}} pt</p>
     <div class="mode-select">
-      <div class="mode-card" @click="startGame('survival')">
-        <h3>❤️ サバイバル</h3>
-        <p>ライフ3つで限界に挑むエンドレスモード。</p>
-      </div>
-      <div class="mode-card" @click="startGame('timeAttack')">
-        <h3>⏳ タイムアタック</h3>
-        <p>60秒間でどれだけスコアを稼げるか競う。</p>
-      </div>
-      <div class="mode-card" @click="startGame('practice')">
-        <h3>🌿 フリー練習</h3>
-        <p>ライフも時間もなし。じっくり学ぶ。</p>
-      </div>
+      <div class="mode-card" @click="startGame('survival')"><h3>❤️ サバイバル</h3><p>ライフ3つで限界に挑むエンドレスモード。</p></div>
+      <div class="mode-card" @click="startGame('timeAttack')"><h3>⏳ タイムアタック</h3><p>60秒間でどれだけスコアを稼げるか競う。</p></div>
+      <div class="mode-card" @click="startGame('practice')"><h3>🌿 フリー練習</h3><p>ライフも時間もなし。じっくり学ぶ。</p></div>
     </div>
   </div>
 
-  <!-- ==================== ゲーム中 ==================== -->
-  <div v-if="page==='game'" class="fade-in">
+  <!-- ゲーム中 -->
+  <div v-if="page==='game'" class="page-transition">
     <div class="game-stats">
       <div class="score-box">
-        <span v-if="activeMode!=='practice'">SCORE: {{ score }}</span>
-        <span v-else>正解数: {{ score }}</span>
-        <span v-if="combo>1 && activeMode!=='practice'" class="combo-text">{{ combo }} COMBO! 🔥</span>
+        <span v-if="activeMode!=='practice'">SCORE: {{score}}</span>
+        <span v-else>正解数: {{score}}</span>
+        <span v-if="combo>1&&activeMode!=='practice'" class="combo-text">{{combo}} COMBO!</span>
       </div>
       <div class="mode-stats">
-        <span v-if="activeMode==='survival'">
-          <span v-for="n in lives" :key="n">❤️</span>
-          <span v-for="n in (3-lives)" :key="'e'+n">🖤</span>
-        </span>
-        <span v-if="activeMode==='timeAttack'" :class="{'time-danger':timeLeft<=10}">⏳ {{ timeLeft }}秒</span>
+        <span v-if="activeMode==='survival'"><span v-for="n in lives" :key="n">❤️</span><span v-for="n in (3-lives)" :key="'e'+n">🖤</span></span>
+        <span v-if="activeMode==='timeAttack'" :class="{'time-danger':timeLeft<=10}">⏳ {{timeLeft}}秒</span>
         <span v-if="activeMode==='practice'" style="color:#4caf50;">🌿 練習中</span>
       </div>
       <button class="quit-btn" @click="endGame()">中断 🛑</button>
     </div>
     <div class="status-board">
-      <div class="question-header">第{{ questionCount }}問</div>
+      <div class="question-header">第{{questionCount}}問</div>
       <div class="situation-text">
-        {{ currentQ.situation.round }} | {{ currentQ.situation.wind }} |
-        <span class="highlight">{{ currentQ.situation.turn }}巡目</span> |
-        <span class="highlight">{{ currentQ.situation.score }}</span>
+        {{currentQ.situation.round}} | {{currentQ.situation.wind}} |
+        <span class="highlight">{{currentQ.situation.turn}}巡目</span> |
+        <span class="highlight">{{currentQ.situation.score}}</span>
       </div>
-      <div class="dora-text">ドラ: {{ currentQ.situation.dora }}</div>
+      <div class="dora-text">ドラ:
+        <div class="mtile mtile-sm no-hover" :class="td(currentQ.situation.dora).sc" style="display:inline-flex;vertical-align:middle;">
+          <span class="mtile-char">{{td(currentQ.situation.dora).c}}</span>
+          <span class="mtile-suit" v-if="td(currentQ.situation.dora).s">{{td(currentQ.situation.dora).s}}</span>
+        </div>
+      </div>
     </div>
     <div class="hand-area">
-      <div v-for="(t,i) in currentQ.hand" :key="i" class="tile" :class="{disabled:selectedTile}" @click="selectTile(t)">{{ t }}</div>
+      <div v-for="(t,i) in currentQ.hand" :key="i" class="mtile" :class="[td(t).sc, {disabled:selectedTile}]" @click="selectTile(t)">
+        <span class="mtile-char">{{td(t).c}}</span>
+        <span class="mtile-suit" v-if="td(t).s">{{td(t).s}}</span>
+      </div>
     </div>
     <div class="action-info" v-if="selectedTile">
-      <p>「{{ selectedTile }}」を切る！</p>
-      <div class="judgment-mark" :class="judgment">{{ judgment==='correct'?'⭕ 正解！':'❌ 不正解...' }}</div>
+      <p>「{{tileInfo[selectedTile].name}}」を切る！</p>
+      <div class="judgment-mark" :class="judgment">{{judgment==='correct'?'⭕ 正解！':'❌ 不正解...'}}</div>
     </div>
     <div class="explanation-section">
-      <button v-if="!selectedTile" class="btn btn-primary" @click="toggleExpl()">{{ showExpl?'解説を閉じる':'解答を見る' }}</button>
+      <button v-if="!selectedTile" class="btn btn-primary" @click="toggleExpl()">{{showExpl?'解説を閉じる':'解答を見る'}}</button>
       <div v-if="showExpl" class="explanation-box">
-        <h3>【正解】{{ currentQ.correct }} 切り</h3>
-        <p>{{ currentQ.explanation }}</p>
-        <hr style="margin:12px 0;border:0;border-top:1px solid rgba(255,255,255,0.1);">
+        <h3>【正解】{{tileInfo[currentQ.correct].name}} 切り</h3>
+        <p>{{currentQ.explanation}}</p>
+        <hr style="margin:12px 0;border:0;border-top:1px solid rgba(255,255,255,.1);">
         <button class="btn btn-warning" @click="nextQuestion()">次の問題へ ➡️</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== ゲーム結果 ==================== -->
-  <div v-if="page==='game-result'" class="fade-in result-screen">
+  <!-- ゲーム結果 -->
+  <div v-if="page==='game-result'" class="page-transition result-screen">
     <h2>
       <span v-if="activeMode==='timeAttack'">⏰ TIME UP! ⏰</span>
       <span v-else-if="activeMode==='practice'">🌿 練習終了 🌿</span>
       <span v-else>💀 GAME OVER 💀</span>
     </h2>
-    <p class="score-text">最終結果<br><span class="score-number">{{ score }}</span> {{ activeMode==='practice'?'問正解':'pt' }}</p>
-    <p v-if="isNewRecord && activeMode==='survival'" class="perfect-msg">🎉 自己ベスト更新！ 🎉</p>
+    <p class="score-text">最終結果<br><span class="score-number">{{score}}</span> {{activeMode==='practice'?'問正解':'pt'}}</p>
+    <p v-if="isNewRecord&&activeMode==='survival'" class="perfect-msg">🎉 自己ベスト更新！ 🎉</p>
     <div class="btn-group" style="margin-top:20px;">
       <button class="btn btn-success" @click="goHome()">🏠 ホームに戻る</button>
     </div>
