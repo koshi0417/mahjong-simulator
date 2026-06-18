@@ -35,9 +35,9 @@
       <p class="title-sub">〜 初心者から何切るマスターへ 〜</p>
     </div>
     <div class="title-deco-tiles">
-      <div class="mtile mtile-big suit-man"><span class="mtile-char">一</span><span class="mtile-suit">萬</span></div>
-      <div class="mtile mtile-big suit-pin"><span class="mtile-char">九</span><span class="mtile-suit">●●●</span></div>
-      <div class="mtile mtile-big suit-drgR"><span class="mtile-char">中</span></div>
+      <div class="mtile mtile-big suit-man"><img src="tiles/Man1.svg" class="mtile-img"></div>
+      <div class="mtile mtile-big suit-pin"><img src="tiles/Pin9.svg" class="mtile-img"></div>
+      <div class="mtile mtile-big suit-drgR"><img src="tiles/Chun.svg" class="mtile-img"></div>
     </div>
     <button class="btn btn-primary start-btn" @click="enterHome()">TAP TO START</button>
     <div class="title-footer">© 2026 Mahjong Dojo</div>
@@ -101,8 +101,11 @@
     <div class="tile-grid">
       <div class="tile-cell" v-for="t in currentTiles" :key="t">
         <div class="mtile no-hover" :class="td(t).sc">
-          <span class="mtile-char">{{td(t).c}}</span>
-          <span class="mtile-suit" v-if="td(t).s">{{td(t).s}}</span>
+          <img v-if="tileImages[t]" :src="tileImages[t]" class="mtile-img" alt="">
+          <template v-else>
+            <span class="mtile-char">{{td(t).c}}</span>
+            <span class="mtile-suit" v-if="td(t).s">{{td(t).s}}</span>
+          </template>
         </div>
         <span class="tile-name">{{tileInfo[t].name}}</span>
         <span class="tile-reading">{{tileInfo[t].reading}}</span>
@@ -127,13 +130,13 @@
       <h3>📘 順子（シュンツ）— 連続する数牌3枚</h3>
       <p>同じ種類の数牌で、連続する3つの数字を揃えた組み合わせ。</p>
       <div class="example-tiles">
-        <div class="mtile mtile-sm suit-man"><span class="mtile-char">一</span><span class="mtile-suit">萬</span></div>
-        <div class="mtile mtile-sm suit-man"><span class="mtile-char">二</span><span class="mtile-suit">萬</span></div>
-        <div class="mtile mtile-sm suit-man"><span class="mtile-char">三</span><span class="mtile-suit">萬</span></div>
+        <div class="mtile mtile-sm suit-man"><img src="tiles/Man1.svg" class="mtile-img"></div>
+        <div class="mtile mtile-sm suit-man"><img src="tiles/Man2.svg" class="mtile-img"></div>
+        <div class="mtile mtile-sm suit-man"><img src="tiles/Man3.svg" class="mtile-img"></div>
         <span style="color:#aaa;font-size:18px;margin:0 8px;">や</span>
-        <div class="mtile mtile-sm suit-pin"><span class="mtile-char">四</span><span class="mtile-suit">筒</span></div>
-        <div class="mtile mtile-sm suit-pin"><span class="mtile-char">五</span><span class="mtile-suit">筒</span></div>
-        <div class="mtile mtile-sm suit-pin"><span class="mtile-char">六</span><span class="mtile-suit">筒</span></div>
+        <div class="mtile mtile-sm suit-pin"><img src="tiles/Pin4.svg" class="mtile-img"></div>
+        <div class="mtile mtile-sm suit-pin"><img src="tiles/Pin5.svg" class="mtile-img"></div>
+        <div class="mtile mtile-sm suit-pin"><img src="tiles/Pin6.svg" class="mtile-img"></div>
       </div>
       <p>※ 字牌では順子は作れません。9→1とつながることもありません。</p>
     </div>
@@ -141,21 +144,21 @@
       <h3>📗 刻子（コーツ）— 同じ牌3枚</h3>
       <p>まったく同じ牌を3枚集めた組み合わせ。字牌でも作れます。</p>
       <div class="example-tiles">
-        <div class="mtile mtile-sm suit-man"><span class="mtile-char">五</span><span class="mtile-suit">萬</span></div>
-        <div class="mtile mtile-sm suit-man"><span class="mtile-char">五</span><span class="mtile-suit">萬</span></div>
-        <div class="mtile mtile-sm suit-man"><span class="mtile-char">五</span><span class="mtile-suit">萬</span></div>
+        <div class="mtile mtile-sm suit-man"><img src="tiles/Man5.svg" class="mtile-img"></div>
+        <div class="mtile mtile-sm suit-man"><img src="tiles/Man5.svg" class="mtile-img"></div>
+        <div class="mtile mtile-sm suit-man"><img src="tiles/Man5.svg" class="mtile-img"></div>
         <span style="color:#aaa;font-size:18px;margin:0 8px;">や</span>
-        <div class="mtile mtile-sm suit-drgR"><span class="mtile-char">中</span></div>
-        <div class="mtile mtile-sm suit-drgR"><span class="mtile-char">中</span></div>
-        <div class="mtile mtile-sm suit-drgR"><span class="mtile-char">中</span></div>
+        <div class="mtile mtile-sm suit-drgR"><img src="tiles/Chun.svg" class="mtile-img"></div>
+        <div class="mtile mtile-sm suit-drgR"><img src="tiles/Chun.svg" class="mtile-img"></div>
+        <div class="mtile mtile-sm suit-drgR"><img src="tiles/Chun.svg" class="mtile-img"></div>
       </div>
     </div>
     <div class="learn-section">
       <h3>📙 雀頭（ジャントウ）— 同じ牌2枚</h3>
       <p>同じ牌のペア。「アタマ」とも呼ばれます。アガリには必ず1組必要です。</p>
       <div class="example-tiles">
-        <div class="mtile mtile-sm suit-wind"><span class="mtile-char">南</span></div>
-        <div class="mtile mtile-sm suit-wind"><span class="mtile-char">南</span></div>
+        <div class="mtile mtile-sm suit-wind"><img src="tiles/Nan.svg" class="mtile-img"></div>
+        <div class="mtile mtile-sm suit-wind"><img src="tiles/Nan.svg" class="mtile-img"></div>
       </div>
     </div>
     <div style="text-align:center;margin-top:20px;">
@@ -216,14 +219,20 @@
     <div class="quiz-question">
       <div v-if="quizStep===1" class="big-tile-area">
         <div class="mtile mtile-big no-hover" :class="td(currentQuiz.tile).sc">
-          <span class="mtile-char">{{td(currentQuiz.tile).c}}</span>
-          <span class="mtile-suit" v-if="td(currentQuiz.tile).s">{{td(currentQuiz.tile).s}}</span>
+          <img v-if="tileImages[currentQuiz.tile]" :src="tileImages[currentQuiz.tile]" class="mtile-img" alt="">
+          <template v-else>
+            <span class="mtile-char">{{td(currentQuiz.tile).c}}</span>
+            <span class="mtile-suit" v-if="td(currentQuiz.tile).s">{{td(currentQuiz.tile).s}}</span>
+          </template>
         </div>
       </div>
       <div v-if="quizStep===2 || quizStep===4" class="quiz-tiles">
         <div v-for="(t,i) in currentQuiz.tiles" :key="i" class="mtile mtile-quiz no-hover" :class="td(t).sc">
-          <span class="mtile-char">{{td(t).c}}</span>
-          <span class="mtile-suit" v-if="td(t).s">{{td(t).s}}</span>
+          <img v-if="tileImages[t]" :src="tileImages[t]" class="mtile-img" alt="">
+          <template v-else>
+            <span class="mtile-char">{{td(t).c}}</span>
+            <span class="mtile-suit" v-if="td(t).s">{{td(t).s}}</span>
+          </template>
         </div>
       </div>
       <p class="q-text" v-if="quizStep!==3">{{currentQuiz.question}}</p>
@@ -312,15 +321,21 @@
       </div>
       <div class="dora-text">ドラ:
         <div class="mtile mtile-sm no-hover" :class="td(currentQ.situation.dora).sc" style="display:inline-flex;vertical-align:middle;">
-          <span class="mtile-char">{{td(currentQ.situation.dora).c}}</span>
-          <span class="mtile-suit" v-if="td(currentQ.situation.dora).s">{{td(currentQ.situation.dora).s}}</span>
+          <img v-if="tileImages[currentQ.situation.dora]" :src="tileImages[currentQ.situation.dora]" class="mtile-img" alt="">
+          <template v-else>
+            <span class="mtile-char">{{td(currentQ.situation.dora).c}}</span>
+            <span class="mtile-suit" v-if="td(currentQ.situation.dora).s">{{td(currentQ.situation.dora).s}}</span>
+          </template>
         </div>
       </div>
     </div>
     <div class="hand-area">
       <div v-for="(t,i) in currentQ.hand" :key="i" class="mtile" :class="[td(t).sc, {disabled:selectedTile}]" @click="selectTile(t)">
-        <span class="mtile-char">{{td(t).c}}</span>
-        <span class="mtile-suit" v-if="td(t).s">{{td(t).s}}</span>
+        <img v-if="tileImages[t]" :src="tileImages[t]" class="mtile-img" alt="">
+        <template v-else>
+          <span class="mtile-char">{{td(t).c}}</span>
+          <span class="mtile-suit" v-if="td(t).s">{{td(t).s}}</span>
+        </template>
       </div>
     </div>
     <div class="action-info" v-if="selectedTile">
@@ -337,8 +352,11 @@
           <h4>💡 待ち牌</h4>
           <div class="waits-tiles">
             <div v-for="(wt, i) in currentQ.waits" :key="'w'+i" class="mtile mtile-sm no-hover" :class="td(wt).sc">
-              <span class="mtile-char">{{td(wt).c}}</span>
-              <span class="mtile-suit" v-if="td(wt).s">{{td(wt).s}}</span>
+              <img v-if="tileImages[wt]" :src="tileImages[wt]" class="mtile-img" alt="">
+              <template v-else>
+                <span class="mtile-char">{{td(wt).c}}</span>
+                <span class="mtile-suit" v-if="td(wt).s">{{td(wt).s}}</span>
+              </template>
             </div>
           </div>
         </div>

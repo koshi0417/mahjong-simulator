@@ -14,6 +14,14 @@ const tileDisplay={
 };
 function td(t){return tileDisplay[t]||{c:'?',s:'',sc:''};}
 
+const tileImages = {
+  '🀇':'tiles/Man1.svg','🀈':'tiles/Man2.svg','🀉':'tiles/Man3.svg','🀊':'tiles/Man4.svg','🀋':'tiles/Man5.svg','🀌':'tiles/Man6.svg','🀍':'tiles/Man7.svg','🀎':'tiles/Man8.svg','🀏':'tiles/Man9.svg',
+  '🀙':'tiles/Pin1.svg','🀚':'tiles/Pin2.svg','🀛':'tiles/Pin3.svg','🀜':'tiles/Pin4.svg','🀝':'tiles/Pin5.svg','🀞':'tiles/Pin6.svg','🀟':'tiles/Pin7.svg','🀠':'tiles/Pin8.svg','🀡':'tiles/Pin9.svg',
+  '🀐':'tiles/Sou1.svg','🀑':'tiles/Sou2.svg','🀒':'tiles/Sou3.svg','🀓':'tiles/Sou4.svg','🀔':'tiles/Sou5.svg','🀕':'tiles/Sou6.svg','🀖':'tiles/Sou7.svg','🀗':'tiles/Sou8.svg','🀘':'tiles/Sou9.svg',
+  '🀀':'tiles/Ton.svg','🀁':'tiles/Nan.svg','🀂':'tiles/Shaa.svg','🀃':'tiles/Pei.svg',
+  '🀄':'tiles/Chun.svg','🀅':'tiles/Hatsu.svg','🀆':'tiles/Haku.svg'
+};
+
 // ========== サウンド ==========
 let audioCtx=null;
 let soundOn=true;
@@ -558,7 +566,7 @@ createApp({
       questionCount,currentQ,selectedTile,showExpl,judgment,
       currentTiles,filteredYaku,soundEnabled,
       totalXP,currentRank,nextRank,xpProgress,
-      suitTiles,tileInfo,yakuData,hanCategories,tileOrder,td,tileDisplay,
+      suitTiles,tileInfo,yakuData,hanCategories,tileOrder,td,tileDisplay,tileImages,
       achievements,showAchieveModal,shareToX,enterHome,
       goStep,startQuiz,selectQuizAnswer,nextQuizQ,
       startGame,selectTile,nextQuestion,endGame,goHome,toggleExpl,stepStatus,toggleSound

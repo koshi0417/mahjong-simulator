@@ -38,6 +38,7 @@ header p.subtitle{color:#aaa;font-size:14px;}
 .mtile:hover{transform:translateY(-8px) translateX(2px);box-shadow:-1px 1px 1px rgba(255,255,255,0.8) inset, 1px -1px 2px rgba(0,0,0,0.1) inset, -4px 7px 0px #8bc34a, -5px 9px 12px rgba(0,0,0,0.5);}
 .mtile.disabled{pointer-events:none;opacity:.65;}
 .mtile.no-hover{cursor:default;}
+.mtile-img{width:100%;height:100%;object-fit:cover;border-radius:4px;pointer-events:none;z-index:2;}
 .mtile.no-hover:hover{transform:none;box-shadow:-1px 1px 1px rgba(255,255,255,0.8) inset, 1px -1px 2px rgba(0,0,0,0.1) inset, -2px 3px 0px #8bc34a, -3px 4px 5px rgba(0,0,0,0.4);}
 
 /* 彫り込みエフェクト */
