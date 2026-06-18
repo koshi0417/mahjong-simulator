@@ -321,7 +321,7 @@ const {createApp,ref,computed,onMounted} = Vue;
 
 createApp({
   setup(){
-    const page=ref('home');
+    const page=ref('title');
     const unlockedStep=ref(1);
     const stepCleared=ref({1:false,2:false,3:false,4:false,6:false});
 
@@ -435,6 +435,11 @@ createApp({
         });
       }
     });
+
+    function enterHome(){
+      sfxClick(); // ユーザーアクションでAudioContextを初期化
+      page.value = 'home';
+    }
 
     function saveProgress(){localStorage.setItem('mjStep',JSON.stringify({unlocked:unlockedStep.value,cleared:stepCleared.value}));}
 
@@ -554,7 +559,7 @@ createApp({
       currentTiles,filteredYaku,soundEnabled,
       totalXP,currentRank,nextRank,xpProgress,
       suitTiles,tileInfo,yakuData,hanCategories,tileOrder,td,tileDisplay,
-      achievements,showAchieveModal,shareToX,
+      achievements,showAchieveModal,shareToX,enterHome,
       goStep,startQuiz,selectQuizAnswer,nextQuizQ,
       startGame,selectTile,nextQuestion,endGame,goHome,toggleExpl,stepStatus,toggleSound
     };

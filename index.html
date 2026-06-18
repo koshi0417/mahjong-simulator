@@ -11,7 +11,7 @@
 <body>
 <canvas id="confetti-canvas"></canvas>
 <div id="app" class="app">
-  <header>
+  <header v-if="page!=='title'">
     <div class="header-top">
       <h1 @click="goHome()">🀄 麻雀道場</h1>
       <p class="subtitle">〜 初心者から何切るマスターへ 〜</p>
@@ -24,8 +24,24 @@
       </div>
     </div>
   </header>
-  <button class="sound-toggle" @click="toggleSound()">{{ soundEnabled ? '🔊 ON' : '🔇 OFF' }}</button>
+  <button class="sound-toggle" @click="toggleSound()" v-if="page!=='title'">{{ soundEnabled ? '🔊 ON' : '🔇 OFF' }}</button>
   <button class="achieve-btn" v-if="page==='home'" @click="showAchieveModal=true">🏆 実績</button>
+
+  <!-- タイトル画面 -->
+  <div v-if="page==='title'" class="title-screen page-transition">
+    <div class="title-logo">
+      <div class="title-icon">🀄</div>
+      <h1>麻雀道場</h1>
+      <p class="title-sub">〜 初心者から何切るマスターへ 〜</p>
+    </div>
+    <div class="title-deco-tiles">
+      <div class="mtile mtile-big suit-man"><span class="mtile-char">一</span><span class="mtile-suit">萬</span></div>
+      <div class="mtile mtile-big suit-pin"><span class="mtile-char">九</span><span class="mtile-suit">●●●</span></div>
+      <div class="mtile mtile-big suit-drgR"><span class="mtile-char">中</span></div>
+    </div>
+    <button class="btn btn-primary start-btn" @click="enterHome()">TAP TO START</button>
+    <div class="title-footer">© 2026 Mahjong Dojo</div>
+  </div>
 
   <!-- HOME -->
   <div v-if="page==='home'" class="page-transition">
