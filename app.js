@@ -211,6 +211,50 @@ function genYakuQuiz(){
   return questions;
 }
 
+function genWaitQuiz(){
+  const questions=[];
+  const waitData = [
+    {hand:['🀇','🀈'], wait:['🀆','🀉'], q:'両面（リャンメン）待ちです。待ち牌は何？', a:'三・六萬', opts:['一・四萬','二・五萬','三・六萬','四・七萬']},
+    {hand:['🀙','🀛'], wait:['🀚'], q:'嵌張（カンチャン）待ちです。待ち牌は何？', a:'二筒', opts:['一筒','二筒','三筒','四筒']},
+    {hand:['🀐','🀑'], wait:['🀒'], q:'辺張（ペンチャン）待ちです。待ち牌は何？', a:'三索', opts:['一索','二索','三索','四索']},
+    {hand:['🀀'], wait:['🀀'], q:'単騎（タンキ）待ちです。待ち牌は何？', a:'東', opts:['東','南','西','北']},
+    {hand:['🀄','🀄','🀅','🀅'], wait:['🀄','🀅'], q:'双碰（シャボ）待ちです。待ち牌は何？', a:'中・發', opts:['白・發','中・發','東・南','西・北']},
+    {hand:['🀝','🀝','🀝','🀞'], wait:['🀜','🀟','🀞'], q:'変則待ち（ノベタンなど）です。待ち牌は何？', a:'四・七・五筒', opts:['三・六筒','四・七・五筒','二・五・八筒','一・四・七筒']},
+    {hand:['🀇','🀇','🀇','🀈','🀉'], wait:['🀈','🀊'], q:'複合形（エントツなど）の待ちです。', a:'二・四萬', opts:['一・四萬','二・五萬','二・四萬','三・六萬']},
+    {hand:['🀙','🀚','🀛','🀛','🀛'], wait:['🀙','🀜'], q:'複合形の待ちです。', a:'一・四筒', opts:['一・四筒','二・五筒','三・六筒','四・七筒']},
+    {hand:['🀐','🀑','🀒','🀓','🀔'], wait:['🀏','🀒','🀕'], q:'三面張（多面待ち）です。', a:'一・四・七索', opts:['二・五・八索','一・四・七索','三・六・九索','一・九索']},
+    {hand:['🀇','🀈','🀉','🀊','🀋','🀌','🀍','🀎','🀏'], wait:['🀇','🀊','🀍'], q:'九連宝燈の一歩手前です。何待ち？（純正ではない）', a:'一・四・七萬', opts:['一・四・七萬','二・五・八萬','三・六・九萬','一から九までの萬子すべて']}
+  ];
+  for(let i=0;i<10;i++){
+    const d=waitData[i%waitData.length];
+    const opts=shuffle([...d.opts]);
+    questions.push({tiles:d.hand, question:d.q, options:opts, correct:d.a, explain:`正解は「${d.a}」です。待ちの形をしっかり覚えましょう！`});
+  }
+  return shuffle(questions);
+}
+
+function genScoreQuiz(){
+  const questions=[];
+  const scoreData = [
+    {q:'親の満貫（マンガン）の点数は？', a:'12000点', opts:['8000点','12000点','16000点','24000点'], exp:'親の満貫は12000点（ツモなら4000オール）です。'},
+    {q:'子の満貫（マンガン）の点数は？', a:'8000点', opts:['8000点','12000点','16000点','24000点'], exp:'子の満貫は8000点（ツモなら2000/4000）です。'},
+    {q:'子の跳満（ハネマン）の点数は？', a:'12000点', opts:['8000点','12000点','16000点','18000点'], exp:'子の跳満（6〜7翻）は12000点です。'},
+    {q:'親の倍満（バイマン）の点数は？', a:'24000点', opts:['16000点','18000点','24000点','32000点'], exp:'親の倍満（8〜10翻）は24000点です。'},
+    {q:'子の役満の点数は？', a:'32000点', opts:['24000点','32000点','48000点','役満は点数なし'], exp:'子の役満（13翻〜）は32000点です。'},
+    {q:'基本となる符（副底・フーテイ）はいくつ？', a:'20符', opts:['10符','20符','30符','40符'], exp:'アガった時に必ず与えられる基本の符は20符です。'},
+    {q:'門前（メンゼン）でロンアガリした時の加符は？', a:'10符', opts:['0符','2符','10符','20符'], exp:'門前ロン（メンゼン加符）は10符加算されます。'},
+    {q:'ツモアガリした時の加符は？', a:'2符', opts:['0符','2符','10符','20符'], exp:'ツモアガリは原則として2符加算されます（ピンフツモを除く）。'},
+    {q:'中張牌（2〜8）の暗刻（アンコ）は何符？', a:'4符', opts:['2符','4符','8符','16符'], exp:'中張牌の暗刻は4符です。ヤオチュー牌なら倍の8符になります。'},
+    {q:'子の「1翻30符」の点数は？', a:'1000点', opts:['1000点','1500点','2000点','3900点'], exp:'子の1翻30符は1000点（ゴットー）です。麻雀の基本となる点数です。'}
+  ];
+  for(let i=0;i<10;i++){
+    const d=scoreData[i%scoreData.length];
+    const opts=shuffle([...d.opts]);
+    questions.push({question:d.q, options:opts, correct:d.a, explain:d.exp});
+  }
+  return shuffle(questions);
+}
+
 // ========== 何切るロジック（既存） ==========
 function createWall(){ let w=[]; tileOrder.forEach(t=>w.push(t,t,t,t)); return shuffle(w); }
 
@@ -343,7 +387,8 @@ createApp({
 
     onMounted(()=>{
       const s=localStorage.getItem('mjStep');
-      if(s){const d=JSON.parse(s);unlockedStep.value=d.unlocked||1;stepCleared.value=d.cleared||{1:false,2:false,3:false};}
+      if(s){const d=JSON.parse(s);unlockedStep.value=d.unlocked||1;stepCleared.value=d.cleared||{1:false,2:false,3:false,4:false,6:false};}
+      else{stepCleared.value={1:false,2:false,3:false,4:false,6:false};}
       const hs=localStorage.getItem('mahjongHighScore');
       if(hs) highScore.value=parseInt(hs,10);
       const savedXP=localStorage.getItem('mahjongXP');
@@ -354,7 +399,7 @@ createApp({
 
     function goStep(n){
       if(n>unlockedStep.value) return;
-      if(n===4){page.value='step4';return;}
+      if(n===5){page.value='step5';return;}
       page.value='step'+n+'-learn';
     }
 
@@ -363,14 +408,19 @@ createApp({
       quizIdx.value=0; quizScore.value=0; quizSel.value=null;
       if(step===1) quizQs.value=genTileQuiz();
       else if(step===2) quizQs.value=genMeldQuiz();
-      else quizQs.value=genYakuQuiz();
+      else if(step===3) quizQs.value=genYakuQuiz();
+      else if(step===4) quizQs.value=genWaitQuiz();
+      else if(step===6) quizQs.value=genScoreQuiz();
       page.value='quiz';
     }
 
     function selectQuizAnswer(opt){
       if(quizSel.value!==null) return;
       sfxClick();quizSel.value=opt;
-      if(opt===currentQuiz.value.correct){quizScore.value++;sfxCorrect();screenFlash('green');spawnConfetti(20);}
+      if(opt===currentQuiz.value.correct){
+        quizScore.value++;sfxCorrect();screenFlash('green');spawnConfetti(20);
+        addXP(2); // クイズ正解で2XP
+      }
       else{sfxWrong();screenShake();screenFlash('red');}
     }
 
@@ -380,10 +430,14 @@ createApp({
         const passed=quizScore.value>=7;
         if(passed){
           stepCleared.value[quizStep.value]=true;
-          if(quizStep.value<4&&quizStep.value>=unlockedStep.value){
-            unlockedStep.value=quizStep.value+1;sfxUnlock();
+          let nextUnlock = quizStep.value+1;
+          if(quizStep.value===4) nextUnlock = 6; // STEP4クリアでSTEP5(ゲーム)とSTEP6(計算)を同時解放
+          
+          if(quizStep.value<6 && nextUnlock>unlockedStep.value){
+            unlockedStep.value = nextUnlock; sfxUnlock();
           }
           saveProgress();spawnConfetti(60);
+          addXP(50); // クイズクリアボーナス
         }
         page.value='quiz-result';
       }
@@ -438,6 +492,7 @@ createApp({
     function toggleExpl(){showExpl.value=!showExpl.value;}
 
     function stepStatus(n){
+      if(n===5) return unlockedStep.value>=5 ? 'unlocked' : 'locked'; // STEP5(何切る)にはクリア状態がない
       if(stepCleared.value[n]) return 'cleared';
       if(n<=unlockedStep.value) return 'unlocked';
       return 'locked';

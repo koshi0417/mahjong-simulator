@@ -47,10 +47,22 @@
         <span class="step-badge" :class="stepStatus(3)">{{stepStatus(3)==='cleared'?'✅ クリア':stepStatus(3)==='unlocked'?'🔓 挑戦可':'🔒'}}</span>
       </div>
       <div class="step-connector">▼</div>
-      <div class="step-card" :class="{locked:unlockedStep<4}" @click="goStep(4)">
+      <div class="step-card" :class="{locked:stepStatus(4)==='locked'}" @click="goStep(4)">
+        <div class="step-icon">👁️</div>
+        <div class="step-body"><h3>STEP 4 — 待ち牌当てクイズ</h3><p>テンパイ形からアタリ牌を見抜く</p></div>
+        <span class="step-badge" :class="stepStatus(4)">{{stepStatus(4)==='cleared'?'✅ クリア':stepStatus(4)==='unlocked'?'🔓 挑戦可':'🔒'}}</span>
+      </div>
+      <div class="step-connector">▼</div>
+      <div class="step-card" :class="{locked:unlockedStep<5}" @click="goStep(5)">
         <div class="step-icon">🔥</div>
-        <div class="step-body"><h3>STEP 4 — 何切るに挑戦！</h3><p>学んだ知識を実践で試す</p></div>
-        <span class="step-badge" :class="unlockedStep>=4?'unlocked':'lock'">{{unlockedStep>=4?'🔓 挑戦可':'🔒'}}</span>
+        <div class="step-body"><h3>STEP 5 — 何切るに挑戦！</h3><p>学んだ知識を実践で試す</p></div>
+        <span class="step-badge" :class="unlockedStep>=5?'unlocked':'lock'">{{unlockedStep>=5?'🔓 挑戦可':'🔒'}}</span>
+      </div>
+      <div class="step-connector">▼</div>
+      <div class="step-card" :class="{locked:unlockedStep<6}" @click="goStep(6)">
+        <div class="step-icon">💯</div>
+        <div class="step-body"><h3>STEP 6 — 点数計算ドリル</h3><p>符計算と点数をマスターする</p></div>
+        <span class="step-badge" :class="unlockedStep>=6?'unlocked':'lock'">{{unlockedStep>=6?'🔓 挑戦可':'🔒'}}</span>
       </div>
     </div>
     <p v-if="highScore>0" class="high-score-display" style="text-align:center;margin-top:20px;">🏆 何切るサバイバル最高記録: {{highScore}} pt</p>
@@ -161,6 +173,22 @@
     </div>
   </div>
 
+  <!-- STEP4 学習 -->
+  <div v-if="page==='step4-learn'" class="page-transition">
+    <div class="page-header">
+      <button class="btn btn-back" @click="goHome()">← 戻る</button>
+      <h2>👁️ STEP 4 — 待ち牌当てクイズ</h2>
+    </div>
+    <div class="learn-section">
+      <h3>📖 待ちの形を見抜こう</h3>
+      <p>テンパイ（あと1枚でアガリの状態）になったとき、どの牌が来ればアガれるか（待ち牌）を素早く正確に把握することは、麻雀において非常に重要です。</p>
+      <p>両面（リャンメン）、嵌張（カンチャン）、辺張（ペンチャン）、単騎（タンキ）、双碰（シャボ）などの基本形から、多面待ちのような複雑な形まで、クイズ形式でトレーニングしましょう！</p>
+    </div>
+    <div style="text-align:center;margin-top:20px;">
+      <button class="btn btn-primary" @click="startQuiz(4)">✏️ 待ち牌クイズに挑戦（10問）</button>
+    </div>
+  </div>
+
   <!-- クイズ -->
   <div v-if="page==='quiz'" class="page-transition quiz-area">
     <div class="page-header">
@@ -175,7 +203,7 @@
           <span class="mtile-suit" v-if="td(currentQuiz.tile).s">{{td(currentQuiz.tile).s}}</span>
         </div>
       </div>
-      <div v-if="quizStep===2" class="quiz-tiles">
+      <div v-if="quizStep===2 || quizStep===4" class="quiz-tiles">
         <div v-for="(t,i) in currentQuiz.tiles" :key="i" class="mtile mtile-quiz no-hover" :class="td(t).sc">
           <span class="mtile-char">{{td(t).c}}</span>
           <span class="mtile-suit" v-if="td(t).s">{{td(t).s}}</span>
@@ -213,17 +241,32 @@
     </div>
   </div>
 
-  <!-- STEP4 モード選択 -->
-  <div v-if="page==='step4'" class="page-transition">
+  <!-- STEP4 モード選択 / STEP5 何切るへ -->
+  <div v-if="page==='step5'" class="page-transition">
     <div class="page-header">
       <button class="btn btn-back" @click="goHome()">← 戻る</button>
-      <h2>🔥 何切るに挑戦！</h2>
+      <h2>🔥 STEP 5 — 何切るに挑戦！</h2>
     </div>
     <p v-if="highScore>0" class="high-score-display">🏆 サバイバル最高記録: {{highScore}} pt</p>
     <div class="mode-select">
       <div class="mode-card" @click="startGame('survival')"><h3>❤️ サバイバル</h3><p>ライフ3つで限界に挑むエンドレスモード。</p></div>
       <div class="mode-card" @click="startGame('timeAttack')"><h3>⏳ タイムアタック</h3><p>60秒間でどれだけスコアを稼げるか競う。</p></div>
       <div class="mode-card" @click="startGame('practice')"><h3>🌿 フリー練習</h3><p>ライフも時間もなし。じっくり学ぶ。</p></div>
+    </div>
+  </div>
+
+  <!-- STEP6 点数計算学習 -->
+  <div v-if="page==='step6-learn'" class="page-transition">
+    <div class="page-header">
+      <button class="btn btn-back" @click="goHome()">← 戻る</button>
+      <h2>💯 STEP 6 — 点数計算ドリル</h2>
+    </div>
+    <div class="learn-section">
+      <h3>📖 点数計算の基本</h3>
+      <p>麻雀の点数は「翻（ハン）」と「符（フ）」で決まります。基本となる符（副底）は20符で、そこから待ちの形や面子の種類によって符が加算されます。</p>
+    </div>
+    <div style="text-align:center;margin-top:20px;">
+      <button class="btn btn-primary" @click="startQuiz(6)">✏️ 点数計算ドリルに挑戦（10問）</button>
     </div>
   </div>
 
